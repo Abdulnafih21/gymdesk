@@ -1,0 +1,90 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Classes{% endblock %}{% block page_title %}Class Schedule{% endblock %}
+{% block sidebar_nav %}{% include "admin/_sidebar.html" %}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Classes</h1>
+    {% if gym %}<button class="btn btn-primary"
+        onclick="document.getElementById('addClassModal').classList.add('active')">+ Schedule Class</button>{% endif %}
+</div>
+{% if classes %}
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Class</th>
+                <th>Type</th>
+                <th>Day</th>
+                <th>Time</th>
+                <th>Trainer</th>
+                <th>Capacity</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>{% for c in classes %}<tr>
+                <td class="font-semibold">{{ c['name'] }}</td>
+                <td>{{ c['class_type']|title }}</td>
+                <td>{{ c['day_of_week'] }}</td>
+                <td>{{ c['start_time'] }} - {{ c['end_time'] }}</td>
+                <td>{{ c['trainer_name'] or 'Unassigned' }}</td>
+                <td>{{ c['capacity'] }}</td>
+                <td><span class="badge badge-{{ 'success' if c['is_active'] else 'neutral' }}">{{ 'Active' if
+                        c['is_active'] else 'Inactive' }}</span></td>
+            </tr>{% endfor %}</tbody>
+    </table>
+</div>
+{% else %}<div class="empty-state">
+    <h3>No classes scheduled</h3>
+</div>{% endif %}
+
+{% if gym %}
+<div class="modal-overlay" id="addClassModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Schedule Class</h3><button class="modal-close"
+                onclick="document.getElementById('addClassModal').classList.remove('active')">✕</button>
+        </div>
+        <form method="POST" action="{{ url_for('admin.add_class') }}">
+            <div class="form-group"><label class="form-label">Class Name *</label><input name="name"
+                    class="form-control" required></div>
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">Type</label><select name="class_type"
+                        class="form-control">
+                        <option value="group">Group</option>
+                        <option value="personal">Personal</option>
+                        <option value="hiit">HIIT</option>
+                        <option value="yoga">Yoga</option>
+                        <option value="crossfit">CrossFit</option>
+                    </select></div>
+                <div class="form-group"><label class="form-label">Capacity</label><input type="number" name="capacity"
+                        class="form-control" value="20"></div>
+            </div>
+            <div class="form-group"><label class="form-label">Trainer</label><select name="trainer_id"
+                    class="form-control">
+                    <option value="">— Unassigned —</option>{% for t in trainers %}<option value="{{ t['id'] }}">{{
+                        t['full_name'] }}</option>{% endfor %}
+                </select></div>
+            <div class="form-group"><label class="form-label">Day *</label><select name="day_of_week"
+                    class="form-control" required>
+                    <option value="Monday">Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                    <option value="Saturday">Saturday</option>
+                    <option value="Sunday">Sunday</option>
+                </select></div>
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">Start Time *</label><input type="time"
+                        name="start_time" class="form-control" required></div>
+                <div class="form-group"><label class="form-label">End Time *</label><input type="time" name="end_time"
+                        class="form-control" required></div>
+            </div>
+            <div class="form-group"><label class="form-label">Description</label><textarea name="description"
+                    class="form-control" rows="2"></textarea></div>
+            <button class="btn btn-primary w-full">Schedule Class</button>
+        </form>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

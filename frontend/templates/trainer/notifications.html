@@ -1,0 +1,32 @@
+{% extends "dashboard_base.html" %}{% block title %}Notifications{% endblock %}{% block page_title %}Notifications{%
+endblock %}
+{% block sidebar_nav %}{% include "trainer/_sidebar.html" %}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>🔔 Notifications</h1>
+</div>
+
+{% if notifications %}
+<div class="table-wrapper">
+    <div style="display:flex;flex-direction:column;gap:12px;padding:16px;">
+        {% for n in notifications %}
+        <div
+            style="padding:16px;border-radius:12px;background:{% if n['is_read'] %}var(--card-bg){% else %}rgba(99,102,241,0.08){% endif %};border:1px solid {% if n['is_read'] %}var(--border-color){% else %}var(--primary){% endif %};">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <span class="font-semibold">{{ n['title'] }}</span>
+                <span class="text-muted" style="font-size:0.8rem;">{{ n['created_at'] }}</span>
+            </div>
+            <p style="margin:0;color:var(--text-secondary);">{{ n['message'] }}</p>
+            {% if n['link'] %}<a href="{{ n['link'] }}" class="btn btn-ghost btn-sm" style="margin-top:8px;">View
+                →</a>{% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div class="empty-state">
+    <h3>No notifications</h3>
+    <p>You're all caught up! 🎉</p>
+</div>
+{% endif %}
+{% endblock %}

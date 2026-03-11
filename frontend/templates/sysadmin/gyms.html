@@ -1,0 +1,51 @@
+{% extends "dashboard_base.html" %}{% block title %}All Gyms{% endblock %}{% block page_title %}All Gyms{% endblock %}
+{% block sidebar_nav %}{% include "sysadmin/_sidebar.html" %}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>🏢 Registered Gyms</h1>
+</div>
+
+{% if gyms %}
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Gym</th>
+                <th>Owner</th>
+                <th>Contact</th>
+                <th>Members</th>
+                <th>Trainers</th>
+                <th>Active Subs</th>
+                <th>Monthly Rev</th>
+                <th>Total Rev</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for g in gyms %}<tr>
+                <td>
+                    <div class="font-semibold">{{ g['name'] }}</div>
+                    <div class="text-xs text-muted">{{ g['city'] or '' }}{% if g['state'] %}, {{ g['state'] }}{% endif
+                        %}</div>
+                </td>
+                <td>
+                    <div>{{ g['owner_name'] }}</div>
+                    <div class="text-xs text-muted">{{ g['owner_email'] }}</div>
+                </td>
+                <td>{{ g['owner_phone'] or '—' }}</td>
+                <td><span class="badge badge-primary">{{ g['member_count'] }}</span></td>
+                <td><span class="badge badge-success">{{ g['trainer_count'] }}</span>{% if g['pending_trainers'] %}
+                    <span class="badge badge-warning">+{{ g['pending_trainers'] }}</span>{% endif %}</td>
+                <td>{{ g['active_subscriptions'] }}</td>
+                <td class="font-bold">{{ format_currency(g['monthly_revenue']) }}</td>
+                <td class="font-bold">{{ format_currency(g['total_revenue']) }}</td>
+                <td><a href="{{ url_for('sysadmin.gym_detail', gym_id=g['id']) }}"
+                        class="btn btn-primary btn-sm">View</a></td>
+            </tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}<div class="empty-state">
+    <h3>No gyms registered</h3>
+</div>{% endif %}
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "dashboard_base.html" %}{% block title %}Leads{% endblock %}{% block page_title %}Lead Management{% endblock
+%}{% block sidebar_nav %}{% include "admin/_sidebar.html" %}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>🎯 Leads</h1>
+    {% if gym %}<button class="btn btn-primary"
+        onclick="document.getElementById('addLeadModal').classList.add('active')">+ Add Lead</button>{% endif %}
+</div>
+{% if leads %}<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Source</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for l in leads %}<tr>
+                <td class="font-semibold">{{ l['name'] }}</td>
+                <td>{{ l['email'] or '—' }}</td>
+                <td>{{ l['phone'] or '—' }}</td>
+                <td>{{ l['source']|replace('-',' ')|title }}</td>
+                <td><span
+                        class="badge badge-{{ 'success' if l['status']=='converted' else 'info' if l['status']=='interested' else 'warning' if l['status']=='contacted' else 'error' if l['status']=='lost' else 'neutral' }}">{{
+                        l['status']|title }}</span></td>
+                <td>{{ format_date(l['created_at']) }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('admin.update_lead_status', lead_id=l['id']) }}"
+                        class="flex gap-1"><select name="status" class="form-control"
+                            style="max-width:120px;font-size:0.75rem;padding:4px 8px;">
+                            <option value="new" {% if l['status']=='new' %}selected{% endif %}>New</option>
+                            <option value="contacted" {% if l['status']=='contacted' %}selected{% endif %}>Contacted
+                            </option>
+                            <option value="interested" {% if l['status']=='interested' %}selected{% endif %}>Interested
+                            </option>
+                            <option value="converted" {% if l['status']=='converted' %}selected{% endif %}>Converted
+                            </option>
+                            <option value="lost" {% if l['status']=='lost' %}selected{% endif %}>Lost</option>
+                        </select><button class="btn btn-ghost btn-sm">Update</button></form>
+                </td>
+            </tr>{% endfor %}</tbody>
+    </table>
+</div>
+{% else %}<div class="empty-state">
+    <h3>No leads yet</h3>
+    <p>Add leads to track potential members.</p>
+</div>{% endif %}
+
+{% if gym %}<div class="modal-overlay" id="addLeadModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Add Lead</h3><button class="modal-close"
+                onclick="document.getElementById('addLeadModal').classList.remove('active')">✕</button>
+        </div>
+        <form method="POST" action="{{ url_for('admin.add_lead') }}">
+            <div class="form-group"><label class="form-label">Name *</label><input name="name" class="form-control"
+                    required></div>
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">Email</label><input type="email" name="email"
+                        class="form-control"></div>
+                <div class="form-group"><label class="form-label">Phone</label><input name="phone" class="form-control">
+                </div>
+            </div>
+            <div class="form-group"><label class="form-label">Source</label><select name="source" class="form-control">
+                    <option value="walk-in">Walk-in</option>
+                    <option value="website">Website</option>
+                    <option value="referral">Referral</option>
+                    <option value="social-media">Social Media</option>
+                    <option value="advertisement">Advertisement</option>
+                </select></div>
+            <div class="form-group"><label class="form-label">Notes</label><textarea name="notes" class="form-control"
+                    rows="2"></textarea></div>
+            <button class="btn btn-primary w-full">Add Lead</button>
+        </form>
+    </div>
+</div>{% endif %}
+{% endblock %}

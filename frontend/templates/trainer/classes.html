@@ -1,0 +1,34 @@
+{% extends "dashboard_base.html" %}{% block title %}My Classes{% endblock %}{% block page_title %}My Classes{% endblock
+%}
+{% block sidebar_nav %}{% include "trainer/_sidebar.html" %}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>📅 My Classes</h1>
+</div>
+{% if classes %}<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Class</th>
+                <th>Day</th>
+                <th>Time</th>
+                <th>Booked</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in classes %}<tr>
+                <td class="font-semibold">{{ c['name'] }}</td>
+                <td>{{ c['day_of_week'] }}</td>
+                <td>{{ c['start_time'] }}-{{ c['end_time'] }}</td>
+                <td>{{ c['booked_count'] }}/{{ c['capacity'] }}</td>
+                <td><span class="badge badge-{{ 'success' if c['is_active'] else 'neutral' }}">{{ 'Active' if
+                        c['is_active'] else 'Inactive' }}</span></td>
+            </tr>{% endfor %}</tbody>
+    </table>
+</div>
+{% else %}<div class="empty-state">
+    <h3>No classes assigned</h3>
+    <p>Your gym admin will assign classes to you.</p>
+</div>{% endif %}
+{% endblock %}

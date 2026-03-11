@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block title %}Member Registration{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">{% endblock %}
+
+{% block body %}
+<div class="auth-page">
+    <div class="auth-container wide">
+        <div class="auth-logo">
+            <a href="{{ url_for('public.landing') }}">
+                <div class="auth-logo-icon">G</div>
+                <div class="auth-logo-text">Gym<span>Desk</span></div>
+            </a>
+        </div>
+        <div class="auth-card">
+            <h2>Join as a Member</h2>
+            <p class="auth-subtitle">Create your account and choose your preferred gym</p>
+
+            <form method="POST">
+                <div class="form-section-title">👤 Personal Details</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Full Name *</label>
+                        <input type="text" name="full_name" class="form-control" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone *</label>
+                        <input type="tel" name="phone" class="form-control" placeholder="+91-XXXXXXXXXX" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email *</label>
+                    <input type="email" name="email" class="form-control" placeholder="you@example.com" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Password *</label>
+                        <input type="password" name="password" class="form-control" placeholder="Min 6 characters"
+                            required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Confirm Password *</label>
+                        <input type="password" name="confirm_password" class="form-control"
+                            placeholder="Re-enter password" required>
+                    </div>
+                </div>
+
+                <!-- Choose Gym -->
+                <div class="form-section">
+                    <div class="form-section-title">🏢 Choose Your Gym *</div>
+                    <div class="form-group">
+                        <select name="gym_id" class="form-control" required>
+                            <option value="">— Select a gym —</option>
+                            {% for gym in gyms %}
+                            <option value="{{ gym['id'] }}">{{ gym['name'] }}{% if gym['city'] %} — {{ gym['city'] }}{%
+                                endif %}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Health & Fitness Info -->
+                <div class="form-section">
+                    <div class="form-section-title">🏋️ Health & Fitness Details</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Date of Birth</label>
+                            <input type="date" name="date_of_birth" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Gender</label>
+                            <select name="gender" class="form-control">
+                                <option value="">— Select —</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Weight (kg)</label>
+                            <input type="number" name="weight" class="form-control" placeholder="70" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Height (cm)</label>
+                            <input type="number" name="height" class="form-control" placeholder="175" step="0.1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Blood Group</label>
+                        <select name="blood_group" class="form-control">
+                            <option value="">— Select —</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Fitness Goal</label>
+                        <select name="fitness_goal" class="form-control">
+                            <option value="">— Select —</option>
+                            <option value="weight_loss">Weight Loss</option>
+                            <option value="muscle_gain">Muscle Gain</option>
+                            <option value="general_fitness">General Fitness</option>
+                            <option value="strength">Strength Training</option>
+                            <option value="flexibility">Flexibility & Yoga</option>
+                            <option value="endurance">Endurance & Cardio</option>
+                            <option value="sports">Sports Performance</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Emergency Contact -->
+                <div class="form-section">
+                    <div class="form-section-title">🚨 Emergency Contact</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Contact Name</label>
+                            <input type="text" name="emergency_contact" class="form-control"
+                                placeholder="Parent/Spouse name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Contact Phone</label>
+                            <input type="tel" name="emergency_phone" class="form-control" placeholder="+91-XXXXXXXXXX">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-full btn-lg mt-4">Create Account</button>
+            </form>
+
+            <div class="auth-footer">
+                Already have an account? <a href="{{ url_for('auth.login') }}">Sign In</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Trainer Dashboard{% endblock %}{% block page_title %}Trainer Dashboard{% endblock %}
+{% block sidebar_nav %}{% include "trainer/_sidebar.html" %}{% endblock %}
+{% block content %}
+<div class="card-glass mb-6 flex items-center gap-4" style="padding:20px 24px;">
+    <div class="sidebar-avatar" style="width:48px;height:48px;font-size:1.25rem;">{{ gym['name'][0] }}</div>
+    <div>
+        <h3 style="font-size:1.125rem;">{{ gym['name'] }}</h3>
+        <p class="text-sm text-muted">{{ trainer['specialization']|replace('_',' ')|title if trainer['specialization']
+            else 'Trainer' }} · {{ trainer['experience_years'] }} yrs experience</p>
+    </div>
+</div>
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-value">{{ stats.total_classes }}</div>
+        <div class="stat-label">Active Classes</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-value">{{ stats.total_members }}</div>
+        <div class="stat-label">My Members</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📋</div>
+        <div class="stat-value">{{ stats.workout_plans }}</div>
+        <div class="stat-label">Workout Plans</div>
+    </div>
+</div>
+<div class="widget">
+    <div class="widget-header">
+        <h3>My Classes</h3><a href="{{ url_for('trainer.classes') }}" class="btn btn-ghost btn-sm">View All</a>
+    </div>
+    <div class="widget-body" style="padding:0;">
+        {% if my_classes %}<div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Class</th>
+                        <th>Day</th>
+                        <th>Time</th>
+                        <th>Booked</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in my_classes %}<tr>
+                        <td class="font-semibold">{{ c['name'] }}</td>
+                        <td>{{ c['day_of_week'] }}</td>
+                        <td>{{ c['start_time'] }}-{{ c['end_time'] }}</td>
+                        <td>{{ c['booked_count'] }}/{{ c['capacity'] }}</td>
+                    </tr>{% endfor %}</tbody>
+            </table>
+        </div>
+        {% else %}<div class="p-6 text-center text-muted">No classes assigned yet</div>{% endif %}</div>
+</div>
+{% endblock %}

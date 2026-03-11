@@ -1,0 +1,50 @@
+{% extends "dashboard_base.html" %}{% block title %}My Profile{% endblock %}{% block page_title %}My Profile{% endblock
+%}
+{% block sidebar_nav %}{% include "member/_sidebar.html" %}{% endblock %}
+{% block content %}
+<div class="card" style="max-width:700px;">
+    <form method="POST">
+        <div class="form-section-title">👤 Personal Info</div>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">Full Name</label><input name="full_name"
+                    class="form-control" value="{{ user['full_name'] }}"></div>
+            <div class="form-group"><label class="form-label">Phone</label><input name="phone" class="form-control"
+                    value="{{ user['phone'] or '' }}"></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">Date of Birth</label><input type="date"
+                    name="date_of_birth" class="form-control" value="{{ member['date_of_birth'] or '' }}"></div>
+            <div class="form-group"><label class="form-label">Gender</label><select name="gender" class="form-control">
+                    <option value="">—</option>
+                    <option value="male" {% if member['gender']=='male' %}selected{% endif %}>Male</option>
+                    <option value="female" {% if member['gender']=='female' %}selected{% endif %}>Female</option>
+                    <option value="other" {% if member['gender']=='other' %}selected{% endif %}>Other</option>
+                </select></div>
+        </div>
+        <div class="form-section-title mt-4">🏋️ Fitness Details</div>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">Weight (kg)</label><input name="weight"
+                    class="form-control" value="{{ member['weight_kg'] or '' }}"></div>
+            <div class="form-group"><label class="form-label">Height (cm)</label><input name="height"
+                    class="form-control" value="{{ member['height_cm'] or '' }}"></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">Blood Group</label><select name="blood_group"
+                    class="form-control">
+                    <option value="">—</option>{% for bg in ['A+','A-','B+','B-','O+','O-','AB+','AB-'] %}<option {% if
+                        member['blood_group']==bg %}selected{% endif %}>{{ bg }}</option>{% endfor %}
+                </select></div>
+            <div class="form-group"><label class="form-label">Fitness Goal</label><input name="fitness_goal"
+                    class="form-control" value="{{ member['fitness_goal'] or '' }}"></div>
+        </div>
+        <div class="form-section-title mt-4">🚨 Emergency Contact</div>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">Contact Name</label><input name="emergency_contact"
+                    class="form-control" value="{{ member['emergency_contact'] or '' }}"></div>
+            <div class="form-group"><label class="form-label">Contact Phone</label><input name="emergency_phone"
+                    class="form-control" value="{{ member['emergency_phone'] or '' }}"></div>
+        </div>
+        <button class="btn btn-primary mt-4">Save Changes</button>
+    </form>
+</div>
+{% endblock %}

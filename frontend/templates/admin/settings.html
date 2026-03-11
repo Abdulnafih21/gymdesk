@@ -1,0 +1,38 @@
+{% extends "dashboard_base.html" %}{% block title %}Settings{% endblock %}{% block page_title %}Gym Settings{% endblock
+%}{% block sidebar_nav %}{% include "admin/_sidebar.html" %}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>⚙️ Gym Settings</h1>
+</div>
+<div class="card" style="max-width:700px;">
+    <form method="POST">
+        <div class="form-group"><label class="form-label">Gym Name</label><input name="name" class="form-control"
+                value="{{ gym['name'] }}"></div>
+        <div class="form-group"><label class="form-label">Address</label><input name="address" class="form-control"
+                value="{{ gym['address'] or '' }}"></div>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">City</label><input name="city" class="form-control"
+                    value="{{ gym['city'] or '' }}"></div>
+            <div class="form-group"><label class="form-label">State</label><input name="state" class="form-control"
+                    value="{{ gym['state'] or '' }}"></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">Pincode</label><input name="pincode" class="form-control"
+                    value="{{ gym['pincode'] or '' }}"></div>
+            <div class="form-group"><label class="form-label">Phone</label><input name="phone" class="form-control"
+                    value="{{ gym['phone'] or '' }}"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Email</label><input name="email" class="form-control"
+                value="{{ gym['email'] or '' }}"></div>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">Opening Time</label><input type="time" name="opening_time"
+                    class="form-control" value="{{ gym['opening_time'] }}"></div>
+            <div class="form-group"><label class="form-label">Closing Time</label><input type="time" name="closing_time"
+                    class="form-control" value="{{ gym['closing_time'] }}"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Description</label><textarea name="description"
+                class="form-control" rows="3">{{ gym['description'] or '' }}</textarea></div>
+        <button class="btn btn-primary">Save Changes</button>
+    </form>
+</div>
+{% endblock %}

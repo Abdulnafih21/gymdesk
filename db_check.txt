@@ -1,0 +1,35 @@
+DB exists: True
+Tables: ['users', 'sqlite_sequence', 'gyms', 'members', 'trainers', 'membership_plans', 'member_subscriptions', 'classes', 'class_bookings', 'attendance', 'payments', 'workout_plans', 'exercises', 'leads', 'notifications', 'slot_sessions', 'slot_bookings', 'trainer_sessions', 'member_trainer']
+
+  users: 5 rows
+  sqlite_sequence: 9 rows
+  gyms: 1 rows
+  members: 2 rows
+  trainers: 1 rows
+  membership_plans: 6 rows
+  member_subscriptions: 1 rows
+  classes: 1 rows
+  class_bookings: 0 rows
+  attendance: 0 rows
+  payments: 2 rows
+  workout_plans: 0 rows
+  exercises: 0 rows
+  leads: 0 rows
+  notifications: 2 rows
+  slot_sessions: 0 rows
+  slot_bookings: 0 rows
+  trainer_sessions: 0 rows
+  member_trainer: 0 rows
+
+Users:
+  gymadmin@example.com (gym_admin)
+  member1@example.com (member)
+  member2@example.com (member)
+  admin@gymdesk.com (system_admin)
+  trainer@example.com (trainer)
+
+Trainer Sessions:
+
+Member-Trainer:
+
+DONE

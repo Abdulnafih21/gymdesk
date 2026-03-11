@@ -1,0 +1,57 @@
+{% extends "dashboard_base.html" %}{% block title %}My Schedule{% endblock %}{% block page_title %}Session Schedule{%
+endblock %}
+{% block sidebar_nav %}{% include "trainer/_sidebar.html" %}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>📅 My Schedule</h1>
+</div>
+
+<!-- Capacity Card -->
+<div class="card-glass mb-6" style="padding:20px 24px;">
+    <div class="flex items-center justify-between flex-wrap gap-4">
+        <div>
+            <h3 style="margin-bottom:4px;">👥 Member Capacity</h3>
+            <p class="text-sm text-secondary">{{ assigned_count }} / {{ trainer['max_capacity'] }} members assigned to
+                you</p>
+        </div>
+        {% if assigned_count >= trainer['max_capacity'] %}
+        <span class="badge badge-error">At Capacity</span>
+        {% else %}
+        <span class="badge badge-success">{{ trainer['max_capacity'] - assigned_count }} slots open</span>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Session Availability Form -->
+<div class="card">
+    <h3 class="mb-4">Set Your Available Sessions</h3>
+    <p class="text-sm text-muted mb-4">Select the sessions you are available for. Members will only be able to book you
+        during these times.</p>
+    <form method="POST" action="{{ url_for('trainer.schedule') }}">
+        {% if sessions %}
+        {% for s in sessions %}
+        <label
+            style="display:block;padding:14px;margin-bottom:8px;border-radius:10px;cursor:pointer;border:2px solid {% if s['id'] in my_session_ids %}var(--accent-primary){% else %}rgba(255,255,255,0.06){% endif %};background:{% if s['id'] in my_session_ids %}rgba(99,102,241,0.08){% else %}transparent{% endif %};transition:all 0.2s;">
+            <input type="checkbox" name="session_ids" value="{{ s['id'] }}" {% if s['id'] in my_session_ids %}checked{%
+                endif %} style="margin-right:10px;">
+            <span class="font-semibold">{{ s['name'] }}</span>
+            <span class="text-sm text-muted" style="display:block;margin-left:28px;">{{ s['start_time'] }} – {{
+                s['end_time'] }} · Capacity: {{ s['capacity'] }}</span>
+        </label>
+        {% endfor %}
+        {% else %}
+        <p class="text-muted text-center p-4">No sessions configured for your gym. Ask your admin to set up session
+            slots.</p>
+        {% endif %}
+
+        <div class="form-group mt-4">
+            <label class="form-label">Maximum Member Capacity</label>
+            <input type="number" name="max_capacity" class="form-control" value="{{ trainer['max_capacity'] }}" min="1"
+                max="100" style="max-width:200px;">
+            <p class="text-xs text-muted mt-1">Max members that can be assigned to you</p>
+        </div>
+
+        <button class="btn btn-primary btn-lg mt-4">Save Schedule</button>
+    </form>
+</div>
+{% endblock %}

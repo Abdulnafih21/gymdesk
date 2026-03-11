@@ -1,0 +1,140 @@
+{% extends "dashboard_base.html" %}{% block title %}Payments{% endblock %}{% block page_title %}Payments{% endblock %}
+{% block sidebar_nav %}{% include "admin/_sidebar.html" %}{% endblock %}
+{% block content %}
+
+<!-- Revenue Summary Cards -->
+<div class="stats-grid mb-6">
+    <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-value">{{ format_currency(today_revenue) }}</div>
+        <div class="stat-label">Today's Revenue</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-value">{{ format_currency(monthly_revenue) }}</div>
+        <div class="stat-label">This Month</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">🏦</div>
+        <div class="stat-value">{{ format_currency(today_admission) }}</div>
+        <div class="stat-label">Today Admissions</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-value">{{ total_active }}</div>
+        <div class="stat-label">Active Memberships</div>
+    </div>
+</div>
+
+<!-- Tabs -->
+<div class="page-header">
+    <h1>💳 Payments</h1>
+    <div style="display:flex;gap:8px;">
+        <a href="{{ url_for('admin.payments', tab='pending') }}"
+            class="btn {{ 'btn-primary' if tab == 'pending' else 'btn-ghost' }} btn-sm">
+            ⏳ Pending{% if pending_payments %} ({{ pending_payments|length }}){% endif %}
+        </a>
+        <a href="{{ url_for('admin.payments', tab='all') }}"
+            class="btn {{ 'btn-primary' if tab == 'all' else 'btn-ghost' }} btn-sm">
+            📋 All Payments
+        </a>
+    </div>
+</div>
+
+{% if tab == 'pending' %}
+<!-- Pending Payments -->
+{% if pending_payments %}
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Member</th>
+                <th>Plan</th>
+                <th>Amount</th>
+                <th>Transaction ID</th>
+                <th>Method</th>
+                <th>Date</th>
+                <th>Proof</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in pending_payments %}<tr>
+                <td class="font-semibold">{{ p['member_name'] }}</td>
+                <td>{{ p['plan_name'] or '—' }}</td>
+                <td class="font-bold">{{ format_currency(p['amount']) }}</td>
+                <td><code>{{ p['reference_id'] or '—' }}</code></td>
+                <td>{{ p['payment_method']|upper }}</td>
+                <td>{{ format_date(p['payment_date']) }}</td>
+                <td>
+                    {% if p['transaction_screenshot'] %}
+                    <a href="{{ url_for('static', filename='uploads/' + p['transaction_screenshot']) }}" target="_blank"
+                        class="btn btn-ghost btn-sm">📷 View</a>
+                    {% else %}<span class="text-muted text-sm">None</span>{% endif %}
+                </td>
+                <td>
+                    <div style="display:flex;gap:6px;">
+                        <form method="POST" action="{{ url_for('admin.approve_payment', payment_id=p['id']) }}"
+                            style="display:inline;">
+                            <button class="btn btn-sm"
+                                style="background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);"
+                                onclick="return confirm('Approve this payment?')">✅ Approve</button>
+                        </form>
+                        <form method="POST" action="{{ url_for('admin.reject_payment', payment_id=p['id']) }}"
+                            style="display:inline;">
+                            <input type="hidden" name="admin_notes"
+                                value="Payment invalid. Please upload correct transaction details.">
+                            <button class="btn btn-sm"
+                                style="background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);"
+                                onclick="return confirm('Reject this payment?')">❌ Reject</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>{% endfor %}</tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">
+    <h3>No pending payments</h3>
+    <p>All payments have been processed.</p>
+</div>
+{% endif %}
+
+{% else %}
+<!-- All Payments -->
+{% if all_payments %}
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Member</th>
+                <th>Plan</th>
+                <th>Amount</th>
+                <th>Method</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in all_payments %}<tr>
+                <td class="font-semibold">{{ p['member_name'] }}</td>
+                <td>{{ p['plan_name'] or p['payment_type']|title }}</td>
+                <td class="font-bold">{{ format_currency(p['amount']) }}</td>
+                <td>{{ p['payment_method']|upper }}</td>
+                <td>{{ format_date(p['payment_date']) }}</td>
+                <td><span
+                        class="badge badge-{{ 'success' if p['status']=='completed' else 'warning' if p['status']=='pending' else 'error' }}">{{
+                        p['status']|title }}</span></td>
+                <td class="text-sm text-muted">{{ p['admin_notes'] or '' }}</td>
+            </tr>{% endfor %}</tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">
+    <h3>No payments yet</h3>
+</div>
+{% endif %}
+{% endif %}
+
+{% endblock %}

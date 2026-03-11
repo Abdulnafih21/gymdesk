@@ -1,0 +1,42 @@
+Connected to: C:\Users\abdul\projects\gymdesk1\backend\gymdesk.db
+  Cleared member_trainer
+  Cleared trainer_sessions
+  Cleared slot_bookings
+  Cleared slot_sessions
+  Cleared notifications
+  Cleared exercises
+  Cleared workout_plans
+  Cleared class_bookings
+  Cleared attendance
+  Cleared payments
+  Cleared member_subscriptions
+  Cleared leads
+  Cleared classes
+  Cleared membership_plans
+  Cleared members
+  Cleared trainers
+  Cleared gyms
+All old data cleared.
+
+Gym Admin user ID: 2
+Gym ID: 1
+Trainer 1 user ID: 3
+Trainer 1 ID: 1
+Trainer 2 user ID: 4
+Trainer 2 ID: 2
+Member member1@example.com ID=1, assigned trainer 1
+Member member2@example.com ID=2, assigned trainer 2
+6 plans created
+3 sessions created: IDs [1, 2, 3]
+Trainer sessions: Ahmed->Morning+Evening, Ali->Afternoon+Evening
+Sample class created
+
+COMMITTED SUCCESSFULLY!
+
+==================================================
+System Admin : admin@gymdesk.com      / admin123
+Gym Admin    : gymadmin@example.com    / password123
+Trainer 1    : trainer@example.com     / password123
+Trainer 2    : trainer2@example.com    / password123
+Member 1     : member1@example.com     / password123
+Member 2     : member2@example.com     / password123

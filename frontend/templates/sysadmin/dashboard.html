@@ -1,0 +1,112 @@
+{% extends "dashboard_base.html" %}{% block title %}System Admin{% endblock %}{% block page_title %}System
+Administration{% endblock %}
+{% block sidebar_nav %}{% include "sysadmin/_sidebar.html" %}{% endblock %}
+{% block content %}
+
+<!-- Global Stats -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">🏢</div>
+        <div class="stat-value">{{ stats.total_gyms }}</div>
+        <div class="stat-label">Total Gyms</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-value">{{ stats.total_members }}</div>
+        <div class="stat-label">Total Members</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">🏋️</div>
+        <div class="stat-value">{{ stats.total_trainers }}</div>
+        <div class="stat-label">Active Trainers</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-value">{{ format_currency(stats.total_revenue) }}</div>
+        <div class="stat-label">Total Revenue</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-value">{{ stats.active_subscriptions }}</div>
+        <div class="stat-label">Active Memberships</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-value">{{ stats.pending_payments }}</div>
+        <div class="stat-label">Pending Payments</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">👨‍🏫</div>
+        <div class="stat-value">{{ stats.pending_trainers }}</div>
+        <div class="stat-label">Pending Trainers</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-value">{{ stats.total_classes }}</div>
+        <div class="stat-label">Active Classes</div>
+    </div>
+</div>
+
+<!-- Gyms Overview -->
+<div class="page-header mt-6">
+    <h2>🏢 Gyms Overview</h2>
+    <a href="{{ url_for('sysadmin.gyms') }}" class="btn btn-ghost btn-sm">View All →</a>
+</div>
+{% if gyms %}
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Gym</th>
+                <th>Owner</th>
+                <th>City</th>
+                <th>Members</th>
+                <th>Trainers</th>
+                <th>Revenue</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for g in gyms[:5] %}<tr>
+                <td class="font-semibold">{{ g['name'] }}</td>
+                <td>{{ g['owner_name'] }}</td>
+                <td>{{ g['city'] or '—' }}</td>
+                <td><span class="badge badge-primary">{{ g['member_count'] }}</span></td>
+                <td><span class="badge badge-success">{{ g['trainer_count'] }}</span></td>
+                <td class="font-bold">{{ format_currency(g['revenue']) }}</td>
+                <td><a href="{{ url_for('sysadmin.gym_detail', gym_id=g['id']) }}"
+                        class="btn btn-ghost btn-sm">Details</a></td>
+            </tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}<div class="empty-state">
+    <h3>No gyms registered yet</h3>
+</div>{% endif %}
+
+<!-- Recent Payments -->
+{% if recent_payments %}
+<h2 class="mt-6 mb-4">💳 Recent Payments (All Gyms)</h2>
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Member</th>
+                <th>Gym</th>
+                <th>Amount</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in recent_payments %}<tr>
+                <td>{{ p['member_name'] }}</td>
+                <td>{{ p['gym_name'] }}</td>
+                <td class="font-bold">{{ format_currency(p['amount']) }}</td>
+                <td>{{ format_date(p['payment_date']) }}</td>
+            </tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% endblock %}

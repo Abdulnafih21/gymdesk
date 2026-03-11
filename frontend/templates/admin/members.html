@@ -1,0 +1,40 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Members{% endblock %}{% block page_title %}Members{% endblock %}
+{% block sidebar_nav %}{% include "admin/_sidebar.html" %}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Members</h1>
+    <form method="get" class="flex gap-2"><input name="search" class="form-control" placeholder="Search members..."
+            value="{{ search }}" style="max-width:280px;"><button class="btn btn-primary btn-sm">Search</button></form>
+</div>
+{% if members %}
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Gender</th>
+                <th>Fitness Goal</th>
+                <th>Status</th>
+                <th>Joined</th>
+            </tr>
+        </thead>
+        <tbody>{% for m in members %}<tr>
+                <td class="font-semibold">{{ m['full_name'] }}</td>
+                <td>{{ m['email'] }}</td>
+                <td>{{ m['phone'] or '—' }}</td>
+                <td>{{ (m['gender'] or '—')|title }}</td>
+                <td>{{ (m['fitness_goal'] or '—')|replace('_',' ')|title }}</td>
+                <td><span class="badge badge-{{ 'success' if m['membership_status']=='active' else 'warning' }}">{{
+                        m['membership_status'] }}</span></td>
+                <td>{{ format_date(m['joined_at']) }}</td>
+            </tr>{% endfor %}</tbody>
+    </table>
+</div>
+{% else %}<div class="empty-state">
+    <h3>No members found</h3>
+    <p>{% if search %}Try different search terms{% else %}Members join via registration{% endif %}</p>
+</div>{% endif %}
+{% endblock %}

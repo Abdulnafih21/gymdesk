@@ -1,0 +1,17 @@
+✅ Database initialized successfully!
+ * Debugger is active!
+ * Debugger PIN: 114-858-373
+127.0.0.1 - - [10/Mar/2026 08:39:51] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [10/Mar/2026 08:39:51] "GET /static/css/main.css HTTP/1.1" 200 -
+127.0.0.1 - - [10/Mar/2026 08:39:51] "GET /static/css/landing.css HTTP/1.1" 200 -
+127.0.0.1 - - [10/Mar/2026 08:39:51] "GET /static/js/main.js HTTP/1.1" 200 -
+127.0.0.1 - - [10/Mar/2026 08:39:52] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [10/Mar/2026 08:41:09] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [10/Mar/2026 08:41:09] "GET /static/css/auth.css HTTP/1.1" 200 -
+127.0.0.1 - - [10/Mar/2026 08:41:09] "GET /static/css/main.css HTTP/1.1" 304 -
+127.0.0.1 - - [10/Mar/2026 08:41:10] "GET /static/js/main.js HTTP/1.1" 304 -
+127.0.0.1 - - [10/Mar/2026 08:41:30] "POST /login HTTP/1.1" 302 -
+127.0.0.1 - - [10/Mar/2026 08:41:30] "GET /admin/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [10/Mar/2026 08:41:30] "GET /static/css/dashboard.css HTTP/1.1" 200 -
+127.0.0.1 - - [10/Mar/2026 08:41:31] "GET /static/js/main.js HTTP/1.1" 304 -
+127.0.0.1 - - [10/Mar/2026 08:41:31] "GET /static/css/main.css HTTP/1.1" 304 -

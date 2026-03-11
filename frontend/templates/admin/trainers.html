@@ -1,0 +1,70 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Trainers{% endblock %}
+{% block page_title %}Trainer Management{% endblock %}
+
+{% block sidebar_nav %}
+{% include "admin/_sidebar.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Trainers</h1>
+</div>
+
+{% if trainers %}
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Specialization</th>
+                <th>Experience</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in trainers %}
+            <tr>
+                <td class="font-semibold">{{ t['full_name'] }}</td>
+                <td>{{ t['email'] }}</td>
+                <td>{{ t['phone'] or '—' }}</td>
+                <td>{{ (t['specialization'] or '—') | replace('_', ' ') | title }}</td>
+                <td>{{ t['experience_years'] }} yrs</td>
+                <td>
+                    {% if t['is_approved'] %}
+                    <span class="badge badge-success">Approved</span>
+                    {% else %}
+                    <span class="badge badge-warning">Pending</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if not t['is_approved'] %}
+                    <div class="flex gap-2">
+                        <form method="POST" action="{{ url_for('admin.approve_trainer', trainer_id=t['id']) }}"
+                            style="display:inline;">
+                            <button type="submit" class="btn btn-success btn-sm">✓ Approve</button>
+                        </form>
+                        <form method="POST" action="{{ url_for('admin.reject_trainer', trainer_id=t['id']) }}"
+                            style="display:inline;" onsubmit="return confirm('Reject and remove this trainer?')">
+                            <button type="submit" class="btn btn-danger btn-sm">✕ Reject</button>
+                        </form>
+                    </div>
+                    {% else %}
+                    <span class="text-muted text-sm">Active</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">
+    <h3>No trainers yet</h3>
+    <p>Trainers will appear here once they register for your gym.</p>
+</div>
+{% endif %}
+{% endblock %}

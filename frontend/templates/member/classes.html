@@ -1,0 +1,38 @@
+{% extends "dashboard_base.html" %}{% block title %}Classes{% endblock %}{% block page_title %}Browse Classes{% endblock
+%}
+{% block sidebar_nav %}{% include "member/_sidebar.html" %}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>📅 Available Classes</h1>
+</div>
+{% if classes %}
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;">
+    {% for c in classes %}
+    <div class="card card-glow">
+        <div class="flex items-center justify-between mb-2">
+            <h4>{{ c['name'] }}</h4><span class="badge badge-info">{{ c['class_type']|title }}</span>
+        </div>
+        <p class="text-sm text-secondary mb-4">{{ c['description'] or 'No description' }}</p>
+        <div class="flex gap-4 mb-4 text-sm">
+            <span>📅 {{ c['day_of_week'] }}</span>
+            <span>🕐 {{ c['start_time'] }}-{{ c['end_time'] }}</span>
+        </div>
+        <div class="flex items-center justify-between mb-4">
+            <span class="text-sm text-muted">👨‍🏫 {{ c['trainer_name'] or 'TBD' }}</span>
+            <span class="text-sm">{{ c['booked_count'] }}/{{ c['capacity'] }} spots</span>
+        </div>
+        {% if c['id'] in booked_ids %}
+        <span class="badge badge-success w-full" style="justify-content:center;padding:8px;">✓ Already Booked</span>
+        {% elif c['booked_count'] >= c['capacity'] %}
+        <span class="badge badge-error w-full" style="justify-content:center;padding:8px;">Full</span>
+        {% else %}
+        <form method="POST" action="{{ url_for('member.book_class', class_id=c['id']) }}"><button
+                class="btn btn-primary w-full">Book Class</button></form>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}<div class="empty-state">
+    <h3>No classes available</h3>
+</div>{% endif %}
+{% endblock %}

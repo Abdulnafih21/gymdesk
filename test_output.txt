@@ -1,0 +1,11 @@
+Starting tests...
+flask ok
+config ok
+db ok
+helpers ok
+decorators ok
+qr ok
+app import ok
+init_db ok
+create_app ok
+['/static/<path:filename>', '/login', '/register/gym-admin', '/register/member', '/register/trainer', '/logout', '/', '/gyms', '/admin/dashboard', '/admin/members', '/admin/trainers', '/admin/trainers/<int:trainer_id>/approve', '/admin/trainers/<int:trainer_id>/reject', '/admin/plans', '/admin/plans/add', '/admin/plans/<int:plan_id>/toggle', '/admin/classes', '/admin/classes/add', '/admin/attendance', '/admin/payments', '/admin/reports', '/admin/leads', '/admin/leads/add', '/admin/leads/<int:lead_id>/status', '/admin/settings', '/member/dashboard', '/member/profile', '/member/classes', '/member/classes/<int:class_id>/book', '/member/classes/<int:booking_id>/cancel', '/member/workouts', '/member/payments', '/member/qr', '/trainer/dashboard', '/trainer/classes', '/trainer/members', '/trainer/workouts', '/trainer/workouts/add', '/api/check-in', '/api/stats', '/api/notifications', '/api/notifications/read']

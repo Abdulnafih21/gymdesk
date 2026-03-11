@@ -1,0 +1,72 @@
+<div class="nav-section">
+    <div class="nav-section-title">Main</div>
+    <a href="{{ url_for('trainer.dashboard') }}"
+        class="nav-link {% if request.endpoint == 'trainer.dashboard' %}active{% endif %}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
+        </svg>
+        Dashboard
+    </a>
+    <a href="{{ url_for('trainer.notifications') }}"
+        class="nav-link {% if request.endpoint == 'trainer.notifications' %}active{% endif %}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 01-3.46 0" />
+        </svg>
+        Notifications
+    </a>
+</div>
+<div class="nav-section">
+    <div class="nav-section-title">Training</div>
+    <a href="{{ url_for('trainer.classes') }}"
+        class="nav-link {% if request.endpoint in ('trainer.classes', 'trainer.members') %}active{% endif %}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+        </svg>
+        View Bookings
+    </a>
+    <a href="{{ url_for('trainer.workouts') }}"
+        class="nav-link {% if request.endpoint == 'trainer.workouts' %}active{% endif %}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+        </svg>
+        Workout Plans
+    </a>
+    <a href="{{ url_for('trainer.diet_plans') }}"
+        class="nav-link {% if request.endpoint in ('trainer.diet_plans', 'trainer.add_diet_plan', 'trainer.edit_diet_plan') %}active{% endif %}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8h1a4 4 0 010 8h-1" />
+            <path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z" />
+            <line x1="6" y1="1" x2="6" y2="4" />
+            <line x1="10" y1="1" x2="10" y2="4" />
+            <line x1="14" y1="1" x2="14" y2="4" />
+        </svg>
+        Diet Plans
+    </a>
+</div>
+<div class="nav-section">
+    <div class="nav-section-title">Schedule</div>
+    <a href="{{ url_for('trainer.schedule') }}"
+        class="nav-link {% if request.endpoint == 'trainer.schedule' %}active{% endif %}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+        </svg>
+        My Schedule
+    </a>
+    <a href="{{ url_for('trainer.slots') }}"
+        class="nav-link {% if request.endpoint == 'trainer.slots' %}active{% endif %}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+            <line x1="10" y1="4" x2="10" y2="22" />
+        </svg>
+        Slot Bookings
+    </a>
+</div>

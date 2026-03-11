@@ -1,0 +1,266 @@
+{% extends "dashboard_base.html" %}{% block title %}Book Slots{% endblock %}{% block page_title %}Book Gym Slots{%
+endblock %}
+{% block sidebar_nav %}{% include "member/_sidebar.html" %}{% endblock %}
+{% block content %}
+
+<!-- Assigned Trainer Card -->
+<div class="card-glass mb-6" style="padding:20px 24px;">
+    <div class="flex items-center justify-between flex-wrap gap-4">
+        <div>
+            <h3 style="margin-bottom:4px;">🏋️ Your Trainer</h3>
+            {% if assigned_trainer %}
+            <p class="text-sm text-secondary">{{ assigned_trainer['trainer_name'] }} · {{
+                assigned_trainer['specialization'] or 'General' }}</p>
+            {% else %}
+            <p class="text-sm text-muted">No trainer assigned yet</p>
+            {% endif %}
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('trainerModal').classList.add('active')">
+            {{ 'Change Trainer' if assigned_trainer else 'Choose Trainer' }}
+        </button>
+    </div>
+</div>
+
+<!-- Book Slot Section -->
+<div class="page-header">
+    <h1>📅 Book Gym Sessions</h1>
+</div>
+
+{% if sessions %}
+<form method="POST" action="{{ url_for('member.book_slots') }}" id="bookingForm">
+    <div class="dashboard-grid">
+        <!-- Session Picker -->
+        <div class="widget col-span-4">
+            <div class="widget-header">
+                <h3>Choose Session</h3>
+            </div>
+            <div class="widget-body">
+                {% for s in sessions %}
+                <label class="session-option"
+                    style="display:block;padding:14px;margin-bottom:8px;border-radius:10px;cursor:pointer;border:2px solid rgba(255,255,255,0.06);transition:all 0.2s;">
+                    <input type="radio" name="session_id" value="{{ s['id'] }}" required style="margin-right:10px;">
+                    <span class="font-semibold">{{ s['name'] }}</span>
+                    <span class="text-sm text-muted" style="display:block;margin-left:24px;">{{ s['start_time'] }} – {{
+                        s['end_time'] }} · Capacity: {{ s['capacity'] }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Calendar Picker -->
+        <div class="widget col-span-8">
+            <div class="widget-header">
+                <h3>Select Dates</h3>
+            </div>
+            <div class="widget-body">
+                <div id="calendarGrid"
+                    style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:16px;">
+                    <div class="text-xs text-muted text-center font-semibold" style="padding:8px;">Sun</div>
+                    <div class="text-xs text-muted text-center font-semibold" style="padding:8px;">Mon</div>
+                    <div class="text-xs text-muted text-center font-semibold" style="padding:8px;">Tue</div>
+                    <div class="text-xs text-muted text-center font-semibold" style="padding:8px;">Wed</div>
+                    <div class="text-xs text-muted text-center font-semibold" style="padding:8px;">Thu</div>
+                    <div class="text-xs text-muted text-center font-semibold" style="padding:8px;">Fri</div>
+                    <div class="text-xs text-muted text-center font-semibold" style="padding:8px;">Sat</div>
+                </div>
+                <div class="flex items-center justify-between mb-4">
+                    <button type="button" class="btn btn-ghost btn-sm" onclick="changeMonth(-1)">← Prev</button>
+                    <h4 id="monthLabel"></h4>
+                    <button type="button" class="btn btn-ghost btn-sm" onclick="changeMonth(1)">Next →</button>
+                </div>
+                <div id="selectedDatesDisplay" class="text-sm text-muted mb-2" style="min-height:24px;"></div>
+                <input type="hidden" name="dates" id="datesInput">
+            </div>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary btn-lg w-full mt-4">✅ Confirm Booking</button>
+</form>
+{% else %}
+<div class="card text-center p-6 text-muted">No gym sessions available. Your gym admin needs to set up session slots.
+</div>
+{% endif %}
+
+<!-- Upcoming Bookings -->
+{% if bookings %}
+<h2 class="mt-6 mb-4">📋 Upcoming Bookings</h2>
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Session</th>
+                <th>Time</th>
+                <th>Trainer</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for b in bookings %}<tr>
+                <td class="font-semibold">{{ format_date(b['booking_date']) }}</td>
+                <td>{{ b['session_name'] }}</td>
+                <td>{{ b['start_time'] }} – {{ b['end_time'] }}</td>
+                <td>{{ b['trainer_name'] or '—' }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('member.cancel_slot', booking_id=b['id']) }}"
+                        style="display:inline;">
+                        <button class="btn btn-ghost btn-sm" style="color:#ef4444;"
+                            onclick="return confirm('Cancel this booking?')">Cancel</button>
+                    </form>
+                </td>
+            </tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<!-- Past Bookings -->
+{% if past_bookings %}
+<h2 class="mt-6 mb-4">📜 Past Bookings</h2>
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Session</th>
+                <th>Time</th>
+                <th>Trainer</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for b in past_bookings %}<tr>
+                <td>{{ format_date(b['booking_date']) }}</td>
+                <td>{{ b['session_name'] }}</td>
+                <td>{{ b['start_time'] }} – {{ b['end_time'] }}</td>
+                <td>{{ b['trainer_name'] or '—' }}</td>
+                <td><span class="badge badge-{{ 'success' if b['status']=='attended' else 'neutral' }}">{{
+                        b['status']|title }}</span></td>
+            </tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<!-- Change Trainer Modal -->
+<div class="modal-overlay" id="trainerModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>{{ 'Change Trainer' if assigned_trainer else 'Choose a Trainer' }}</h3>
+            <button class="modal-close"
+                onclick="document.getElementById('trainerModal').classList.remove('active')">✕</button>
+        </div>
+        <form method="POST" action="{{ url_for('member.change_trainer') }}">
+            <div class="form-group">
+                <label class="form-label">Select Trainer</label>
+                {% for t in gym_trainers %}
+                <label
+                    style="display:block;padding:12px;margin-bottom:8px;border-radius:10px;border:2px solid rgba(255,255,255,0.06);cursor:pointer;{% if assigned_trainer and assigned_trainer.trainer_id == t['id'] %}border-color:var(--accent-primary);background:rgba(99,102,241,0.08);{% endif %}">
+                    <input type="radio" name="trainer_id" value="{{ t['id'] }}" style="margin-right:10px;" {% if
+                        assigned_trainer and assigned_trainer.trainer_id==t['id'] %}checked{% endif %} required>
+                    <span class="font-semibold">{{ t['full_name'] }}</span>
+                    <span class="text-sm text-muted" style="display:block;margin-left:24px;">{{ t['specialization'] or
+                        'General' }} · {{ t['current_members'] }}/{{ t['max_capacity'] }} members
+                        {% if t['current_members'] >= t['max_capacity'] %}<span class="badge badge-error"
+                            style="font-size:0.65rem;">FULL</span>{% endif %}
+                    </span>
+                </label>
+                {% endfor %}
+            </div>
+            <button class="btn btn-primary w-full btn-lg">Confirm Trainer</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block dashboard_js %}
+<script>
+    let currentYear, currentMonth;
+    const selectedDates = new Set();
+    const today = new Date();
+    currentYear = today.getFullYear();
+    currentMonth = today.getMonth();
+
+    function renderCalendar() {
+        const grid = document.getElementById('calendarGrid');
+        // Remove old day cells
+        const old = grid.querySelectorAll('.cal-day');
+        old.forEach(el => el.remove());
+
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        document.getElementById('monthLabel').textContent = months[currentMonth] + ' ' + currentYear;
+
+        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+        for (let i = 0; i < firstDay; i++) {
+            const el = document.createElement('div');
+            el.className = 'cal-day';
+            grid.appendChild(el);
+        }
+
+        for (let d = 1; d <= daysInMonth; d++) {
+            const dateObj = new Date(currentYear, currentMonth, d);
+            const dateStr = dateObj.toISOString().split('T')[0];
+            const isPast = dateObj < new Date(today.toDateString());
+
+            const el = document.createElement('div');
+            el.className = 'cal-day';
+            el.textContent = d;
+            el.style.cssText = 'padding:10px;text-align:center;border-radius:8px;cursor:pointer;transition:all 0.2s;font-weight:500;';
+
+            if (isPast) {
+                el.style.opacity = '0.3';
+                el.style.cursor = 'not-allowed';
+            } else {
+                if (selectedDates.has(dateStr)) {
+                    el.style.background = 'var(--accent-primary)';
+                    el.style.color = '#fff';
+                } else {
+                    el.style.background = 'rgba(255,255,255,0.04)';
+                }
+                el.addEventListener('click', () => {
+                    if (selectedDates.has(dateStr)) {
+                        selectedDates.delete(dateStr);
+                    } else {
+                        selectedDates.add(dateStr);
+                    }
+                    renderCalendar();
+                });
+                el.addEventListener('mouseenter', () => { if (!selectedDates.has(dateStr)) el.style.background = 'rgba(99,102,241,0.2)'; });
+                el.addEventListener('mouseleave', () => { if (!selectedDates.has(dateStr)) el.style.background = 'rgba(255,255,255,0.04)'; });
+            }
+            grid.appendChild(el);
+        }
+
+        // Update hidden input and display
+        const sorted = Array.from(selectedDates).sort();
+        document.getElementById('datesInput').value = sorted.join(',');
+        document.getElementById('selectedDatesDisplay').textContent = sorted.length
+            ? 'Selected: ' + sorted.map(d => new Date(d + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })).join(', ')
+            : 'Click dates to select';
+    }
+
+    function changeMonth(delta) {
+        currentMonth += delta;
+        if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+        if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+        renderCalendar();
+    }
+
+    // Session option styling
+    document.querySelectorAll('.session-option input').forEach(input => {
+        input.addEventListener('change', () => {
+            document.querySelectorAll('.session-option').forEach(l => {
+                l.style.borderColor = 'rgba(255,255,255,0.06)';
+                l.style.background = 'transparent';
+            });
+            if (input.checked) {
+                input.closest('.session-option').style.borderColor = 'var(--accent-primary)';
+                input.closest('.session-option').style.background = 'rgba(99,102,241,0.08)';
+            }
+        });
+    });
+
+    renderCalendar();
+</script>
+{% endblock %}

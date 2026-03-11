@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Pending Approval{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">{% endblock %}
+{% block body %}
+<div class="auth-page">
+    <div class="auth-container">
+        <div class="auth-logo"><a href="{{ url_for('public.landing') }}">
+                <div class="auth-logo-icon">G</div>
+                <div class="auth-logo-text">Gym<span>Desk</span></div>
+            </a></div>
+        <div class="auth-card text-center">
+            <div style="font-size:4rem;margin-bottom:16px;">⏳</div>
+            <h2>Approval Pending</h2>
+            <p class="auth-subtitle">Your trainer application is under review by the gym administrator. You'll be
+                notified once approved.</p>
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-ghost mt-4">Logout</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

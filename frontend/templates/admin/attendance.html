@@ -1,0 +1,30 @@
+{% extends "dashboard_base.html" %}{% block title %}Attendance{% endblock %}{% block page_title %}Attendance{% endblock
+%}{% block sidebar_nav %}{% include "admin/_sidebar.html" %}{% endblock %}
+{% block content %}<div class="page-header">
+    <h1>Attendance Records</h1>
+    <form method="get" class="flex gap-2"><input type="date" name="date" class="form-control" value="{{ date_filter }}"
+            style="max-width:200px;"><button class="btn btn-primary btn-sm">Filter</button></form>
+</div>
+{% if records %}<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Member</th>
+                <th>Check In</th>
+                <th>Check Out</th>
+                <th>Method</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in records %}<tr>
+                <td class="font-semibold">{{ r['member_name'] }}</td>
+                <td>{{ format_datetime(r['check_in_time']) }}</td>
+                <td>{{ format_datetime(r['check_out_time']) if r['check_out_time'] else '—' }}</td>
+                <td><span class="badge badge-info">{{ r['check_in_method']|replace('_',' ')|title }}</span></td>
+            </tr>{% endfor %}</tbody>
+    </table>
+</div>
+{% else %}<div class="empty-state">
+    <h3>No attendance records</h3>
+    <p>{% if date_filter %}No check-ins on this date{% else %}Check-ins will appear here{% endif %}</p>
+</div>{% endif %}{% endblock %}

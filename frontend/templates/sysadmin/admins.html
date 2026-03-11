@@ -1,0 +1,48 @@
+{% extends "dashboard_base.html" %}{% block title %}Gym Admins{% endblock %}{% block page_title %}Gym Admins{% endblock
+%}
+{% block sidebar_nav %}{% include "sysadmin/_sidebar.html" %}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>👨‍💼 Gym Administrator Accounts</h1>
+</div>
+
+{% if admins %}
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Admin Name</th>
+                <th>Email (Login)</th>
+                <th>Phone</th>
+                <th>Gym</th>
+                <th>City</th>
+                <th>Members</th>
+                <th>Revenue</th>
+                <th>Registered</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in admins %}<tr>
+                <td class="font-semibold">{{ a['full_name'] }}</td>
+                <td><code
+                        style="background:rgba(99,102,241,0.1);padding:4px 8px;border-radius:6px;">{{ a['email'] }}</code>
+                </td>
+                <td>{{ a['phone'] or '—' }}</td>
+                <td>{{ a['gym_name'] or 'No gym' }}</td>
+                <td>{{ a['gym_city'] or '—' }}</td>
+                <td><span class="badge badge-primary">{{ a['member_count'] }}</span></td>
+                <td class="font-bold">{{ format_currency(a['total_revenue']) }}</td>
+                <td>{{ format_date(a['created_at']) }}</td>
+            </tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="card mt-4" style="background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.2);padding:16px;">
+    <p class="text-sm" style="color:var(--accent-warning);"><strong>🔒 Note:</strong> All admin passwords are set by the
+        gym administrators themselves during registration. For security, the system does not store or display plaintext
+        passwords.</p>
+</div>
+{% else %}<div class="empty-state">
+    <h3>No gym admins registered</h3>
+</div>{% endif %}
+{% endblock %}

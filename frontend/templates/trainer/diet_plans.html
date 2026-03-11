@@ -1,0 +1,116 @@
+{% extends "dashboard_base.html" %}{% block title %}Diet Plans{% endblock %}{% block page_title %}Diet Plans{% endblock
+%}
+{% block sidebar_nav %}{% include "trainer/_sidebar.html" %}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>🥗 Diet Plans</h1>
+    <button class="btn btn-primary" onclick="document.getElementById('addDietModal').classList.add('active')">+ Create
+        Diet Plan</button>
+</div>
+
+{% if diet_plans %}
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px;">
+    {% for dp in diet_plans %}
+    <div class="widget">
+        <div class="widget-header" style="display:flex;justify-content:space-between;align-items:center;">
+            <h3 style="margin:0;">{{ dp['title'] }}</h3>
+            <div style="display:flex;gap:6px;">
+                <form method="POST" action="{{ url_for('trainer.delete_diet_plan', plan_id=dp['id']) }}"
+                    onsubmit="return confirm('Delete this diet plan?')">
+                    <button class="btn btn-ghost btn-sm" style="color:var(--danger);">🗑️</button>
+                </form>
+            </div>
+        </div>
+        <div class="widget-body" style="font-size:0.9rem;">
+            {% if dp['member_name'] %}
+            <div style="margin-bottom:8px;"><span class="badge badge-primary">Assigned to: {{ dp['member_name']
+                    }}</span></div>
+            {% else %}
+            <div style="margin-bottom:8px;"><span class="badge badge-neutral">General Plan</span></div>
+            {% endif %}
+            {% if dp['description'] %}<p style="margin:0 0 12px;color:var(--text-secondary);">{{ dp['description'] }}
+            </p>{% endif %}
+
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                {% if dp['breakfast'] %}<div><strong>🌅 Breakfast:</strong> {{ dp['breakfast'] }}</div>{% endif %}
+                {% if dp['mid_morning'] %}<div><strong>🍎 Mid-Morning:</strong> {{ dp['mid_morning'] }}</div>{% endif %}
+                {% if dp['lunch'] %}<div><strong>🍽️ Lunch:</strong> {{ dp['lunch'] }}</div>{% endif %}
+                {% if dp['afternoon_snack'] %}<div><strong>🥜 Afternoon:</strong> {{ dp['afternoon_snack'] }}</div>{%
+                endif %}
+                {% if dp['dinner'] %}<div><strong>🌙 Dinner:</strong> {{ dp['dinner'] }}</div>{% endif %}
+                {% if dp['pre_workout'] %}<div><strong>💪 Pre-Workout:</strong> {{ dp['pre_workout'] }}</div>{% endif %}
+                {% if dp['post_workout'] %}<div><strong>🧃 Post-Workout:</strong> {{ dp['post_workout'] }}</div>{% endif
+                %}
+                {% if dp['notes'] %}<div
+                    style="margin-top:8px;padding:8px;background:rgba(255,255,255,0.03);border-radius:8px;"><strong>📝
+                        Notes:</strong> {{ dp['notes'] }}</div>{% endif %}
+            </div>
+            <div style="margin-top:8px;font-size:0.8rem;color:var(--text-secondary);">Created: {{ dp['created_at'] }}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <h3>No diet plans yet</h3>
+    <p>Create personalized diet plans for your assigned members.</p>
+</div>
+{% endif %}
+
+<!-- Add Diet Plan Modal -->
+<div class="modal-overlay" id="addDietModal">
+    <div class="modal" style="max-width:600px;">
+        <div class="modal-header">
+            <h3>Create Diet Plan</h3>
+            <button class="modal-close"
+                onclick="document.getElementById('addDietModal').classList.remove('active')">✕</button>
+        </div>
+        <form method="POST" action="{{ url_for('trainer.add_diet_plan') }}" style="max-height:70vh;overflow-y:auto;">
+            <div class="form-group">
+                <label class="form-label">Plan Title *</label>
+                <input name="title" class="form-control" placeholder="e.g. High Protein Fat Loss Plan" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Assign to Member (optional)</label>
+                <select name="member_id" class="form-control">
+                    <option value="">— General Plan —</option>
+                    {% for m in assigned_members %}
+                    <option value="{{ m['id'] }}">{{ m['full_name'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group"><label class="form-label">Description</label>
+                <textarea name="description" class="form-control" rows="2"
+                    placeholder="Brief description of this diet plan..."></textarea>
+            </div>
+            <div class="form-group"><label class="form-label">🌅 Breakfast</label>
+                <input name="breakfast" class="form-control" placeholder="e.g. 4 egg whites, oats, banana">
+            </div>
+            <div class="form-group"><label class="form-label">🍎 Mid-Morning Snack</label>
+                <input name="mid_morning" class="form-control" placeholder="e.g. Mixed nuts, green tea">
+            </div>
+            <div class="form-group"><label class="form-label">🍽️ Lunch</label>
+                <input name="lunch" class="form-control" placeholder="e.g. Brown rice, grilled chicken, salad">
+            </div>
+            <div class="form-group"><label class="form-label">🥜 Afternoon Snack</label>
+                <input name="afternoon_snack" class="form-control" placeholder="e.g. Protein shake, apple">
+            </div>
+            <div class="form-group"><label class="form-label">🌙 Dinner</label>
+                <input name="dinner" class="form-control" placeholder="e.g. Fish, steamed vegetables">
+            </div>
+            <div class="form-group"><label class="form-label">💪 Pre-Workout</label>
+                <input name="pre_workout" class="form-control" placeholder="e.g. Black coffee, banana">
+            </div>
+            <div class="form-group"><label class="form-label">🧃 Post-Workout</label>
+                <input name="post_workout" class="form-control" placeholder="e.g. Whey protein, coconut water">
+            </div>
+            <div class="form-group"><label class="form-label">📝 Additional Notes</label>
+                <textarea name="notes" class="form-control" rows="2"
+                    placeholder="Calorie target, restrictions, tips..."></textarea>
+            </div>
+            <button class="btn btn-primary w-full btn-lg">Create Diet Plan</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

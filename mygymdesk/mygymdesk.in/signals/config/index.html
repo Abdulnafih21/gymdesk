@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+  
+<!-- Mirrored from mygymdesk.in/signals/config/ by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 09 Mar 2026 19:27:28 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../../favicon.ico" sizes="48x48">
+    <link rel="icon" type="image/png" href="../../icons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="../../icons/icon-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/svg+xml" href="../../icons/index.html">
+
+    <!-- Manifest -->
+    <link rel="manifest" href="../../manifest.webmanifest">
+
+    <!-- PWA Meta -->
+    <meta name="theme-color" content="#4F46E5" />
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <!-- Apple PWA -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="MyGymDesk" />
+    <link rel="apple-touch-icon" href="../../icons/apple-touch-icon-180x180.png" />
+
+    <!-- Apple Splash Screens -->
+    <!-- iPhone SE / 8 (750x1334) -->
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="../../icons/icon-512x512.png" />
+    <!-- iPhone X / XS / 11 Pro / 12 Mini / 13 Mini (1125x2436) -->
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="../../icons/icon-512x512.png" />
+    <!-- iPhone XR / 11 / 12 / 13 / 14 (828x1792) -->
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="../../icons/icon-512x512.png" />
+    <!-- iPhone 12 Pro / 13 Pro / 14 (1170x2532) -->
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="../../icons/icon-512x512.png" />
+    <!-- iPhone 14 Pro / 15 / 15 Pro (1179x2556) -->
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="../../icons/icon-512x512.png" />
+    <!-- iPhone 14 Pro Max / 15 Plus / 15 Pro Max (1290x2796) -->
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="../../icons/icon-512x512.png" />
+    <!-- iPad (1620x2160) -->
+    <link rel="apple-touch-startup-image" media="(device-width: 810px) and (device-height: 1080px) and (-webkit-device-pixel-ratio: 2)" href="../../icons/icon-512x512.png" />
+
+    <!-- Inline branded loading style to prevent white flash on PWA launch -->
+    <style>
+      /* Loading state before React mounts - prevents white flash on PWA launch */
+      #root:empty {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        min-height: 100dvh;
+        background-color: #0f172a;
+      }
+      #root:empty::after {
+        content: '';
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(99, 102, 241, 0.2);
+        border-top-color: #6366f1;
+        border-radius: 50%;
+        animation: pwa-spin 0.8s linear infinite;
+      }
+      @keyframes pwa-spin {
+        to { transform: rotate(360deg); }
+      }
+      /* Critical above-fold CSS inlined for faster LCP */
+      .section-container{max-width:80rem;margin-left:auto;margin-right:auto;padding-left:1rem;padding-right:1rem}
+      @media(min-width:640px){.section-container{padding-left:1.5rem;padding-right:1.5rem}}
+      @media(min-width:1024px){.section-container{padding-left:2rem;padding-right:2rem}}
+    </style>
+
+    <!-- MS Tile -->
+    <meta name="msapplication-TileColor" content="#4F46E5" />
+    <meta name="msapplication-TileImage" content="/icons/icon-192x192.png" />
+
+    <!-- Primary Meta Tags -->
+    <title>MyGymDesk — India&#39;s #1 Gym Management Software</title>
+    <meta name="title" content="MyGymDesk — India's #1 Gym Management Software" />
+    <meta name="description" content="Manage members, billing, attendance &amp; more. Built for Indian gyms. WhatsApp automation, UPI payments, QR check-in. Start your free 30-day trial.">
+    <meta name="keywords" content="gym management software, fitness center software, gym billing software, member management, attendance tracking, gym software India" />
+    <meta name="author" content="MyGymDesk" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="English" />
+    <meta name="revisit-after" content="7 days" />
+    <meta name="distribution" content="global" />
+    <meta name="rating" content="general" />
+
+    <!-- Geo Tags -->
+    <meta name="geo.region" content="IN" />
+    <meta name="geo.placename" content="India" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="../../index.html" />
+
+    <!-- DNS-prefetch non-critical origins; preconnect only fonts (used above fold) -->
+    <link rel="dns-prefetch" href="https://db.mygymdesk.in/" />
+    <link rel="dns-prefetch" href="https://cdn.gpteng.co/" />
+
+    <!-- Preload critical font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com/" />
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" /></noscript>
+    <!-- CameraPlain font removed from preload — loaded by dev widgets on demand -->
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="../../index.html" />
+    
+    
+    <meta property="og:image" content="../../og-image.png">
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="MyGymDesk" />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="../../index.html" />
+    
+    
+    <meta name="twitter:image" content="../../og-image.png">
+    <meta name="twitter:site" content="@mygymdesk" />
+    <meta name="twitter:creator" content="@mygymdesk" />
+
+    <!-- Structured Data - Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "MyGymDesk",
+      "url": "https://mygymdesk.in",
+      "logo": "https://mygymdesk.in/logo.png",
+      "description": "Smart gym management software for fitness centers in India",
+      "foundingDate": "2026",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "IN"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "email": "support@mygymdesk.in",
+        "availableLanguage": ["English", "Hindi"]
+      },
+      "sameAs": [
+        "https://www.instagram.com/mygymdesk.in",
+        "https://www.linkedin.com/company/mygymdesk",
+        "https://www.facebook.com/mygymdesk.in",
+        "https://www.youtube.com/@mygymdesk"
+      ]
+    }
+    </script>
+
+    <!-- Structured Data - Software Application -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "MyGymDesk",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "AggregateOffer",
+        "lowPrice": "809",
+        "highPrice": "1799",
+        "priceCurrency": "INR",
+        "offerCount": "3"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "ratingCount": "150",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "description": "Complete gym management software for fitness centers. Manage members, subscriptions, payments, attendance, and classes.",
+      "featureList": [
+        "Member Management",
+        "Subscription Tracking",
+        "Payment Recording",
+        "QR Code Check-in",
+        "Class Booking",
+        "Reports & Analytics"
+      ]
+    }
+    </script>
+    <meta property="og:title" content="MyGymDesk — India&#39;s #1 Gym Management Software">
+  <meta name="twitter:title" content="MyGymDesk — India&#39;s #1 Gym Management Software">
+  <meta property="og:description" content="Manage members, billing, attendance &amp; more. Built for Indian gyms. WhatsApp automation, UPI payments, QR check-in. Start your free 30-day trial.">
+  <meta name="twitter:description" content="Manage members, billing, attendance &amp; more. Built for Indian gyms. WhatsApp automation, UPI payments, QR check-in. Start your free 30-day trial.">
+  <script type="module" crossorigin src="../../assets/index-D-eer9qV.js"></script>
+  <link rel="modulepreload" crossorigin href="../../assets/vendor-helmet-fUUwClDn.js">
+  <link rel="modulepreload" crossorigin href="../../assets/vendor-supabase-DeJMt1qa.js">
+  <link rel="modulepreload" crossorigin href="../../assets/vendor-ui-D4w91lw3.js">
+  <link rel="modulepreload" crossorigin href="../../assets/vendor-query-EFxIVrML.js">
+  <link rel="modulepreload" crossorigin href="../../assets/vendor-react-Bc7stdFL.js">
+  <link rel="stylesheet" crossorigin href="../../assets/index-CoZDVFdo.css">
+<link rel="manifest" href="../../manifest.webmanifest"></head>
+
+  <body>
+    <!-- Noscript fallbacks for analytics (preserved for non-JS tracking) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KXHB64F2"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1422881146016542&amp;ev=PageView&amp;noscript=1" /></noscript>
+    
+
+    <div id="root"></div>
+
+    <!-- Defer all analytics to after page render for faster FCP/LCP -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+
+      function _loadAnalytics() {
+        // Google Tag Manager
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        '../../../www.googletagmanager.com/gtm5445.html?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-KXHB64F2');
+
+        // Google Analytics (GA4)
+        var gs=document.createElement('script');gs.async=true;
+        gs.src='https://www.googletagmanager.com/gtag/js?id=G-HX7TQR21BC';
+        document.head.appendChild(gs);
+        gtag('js', new Date());
+        gtag('config', 'G-HX7TQR21BC');
+
+        // Meta Pixel
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window,document,'script',
+        '../../../connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '1422881146016542');
+        fbq('track', 'PageView');
+
+      }
+
+      // Load analytics well after page is interactive — keep main thread free
+      if ('requestIdleCallback' in window) {
+        window.addEventListener('load', function() {
+          requestIdleCallback(function() { setTimeout(_loadAnalytics, 2000); }, { timeout: 8000 });
+        });
+      } else {
+        window.addEventListener('load', function() { setTimeout(_loadAnalytics, 5000); });
+      }
+    </script>
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"d7c9f310686d4e58b3ba1afdc5abf3a5","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+
+<!-- Mirrored from mygymdesk.in/signals/config/ by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 09 Mar 2026 19:27:28 GMT -->
+</html>

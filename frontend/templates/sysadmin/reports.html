@@ -1,0 +1,182 @@
+{% extends "dashboard_base.html" %}{% block title %}Reports{% endblock %}{% block page_title %}Global Reports{% endblock
+%}
+{% block sidebar_nav %}{% include "sysadmin/_sidebar.html" %}{% endblock %}
+{% block content %}
+<div class="page-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+    <h1>📊 System-Wide Reports</h1>
+    <form method="GET" action="{{ url_for('sysadmin.reports') }}" style="display:flex;align-items:center;gap:10px;">
+        <label style="font-weight:600;color:var(--text-secondary);white-space:nowrap;">Filter by Gym:</label>
+        <select name="gym_id" class="form-control" style="min-width:200px;" onchange="this.form.submit()">
+            <option value="all" {% if selected_gym=='all' %}selected{% endif %}>🏢 All Gyms</option>
+            {% for gym in gyms %}
+            <option value="{{ gym['id'] }}" {% if selected_gym|string==gym['id']|string %}selected{% endif %}>{{
+                gym['name'] }}</option>
+            {% endfor %}
+        </select>
+    </form>
+</div>
+
+<div class="dashboard-grid">
+    <!-- Revenue Chart -->
+    <div class="widget col-span-8">
+        <div class="widget-header">
+            <h3>Monthly Revenue Trend</h3>
+        </div>
+        <div class="widget-body">
+            {% if monthly_revenue %}<canvas id="revenueChart" height="200"></canvas>
+            {% else %}<div class="text-center text-muted p-4">No revenue data yet</div>{% endif %}
+        </div>
+    </div>
+
+    <!-- Revenue by Gym -->
+    <div class="widget col-span-4">
+        <div class="widget-header">
+            <h3>Revenue by Gym</h3>
+        </div>
+        <div class="widget-body">
+            {% if revenue_by_gym %}<canvas id="gymRevenueChart" height="200"></canvas>
+            {% else %}<div class="text-center text-muted p-4">No gym revenue data</div>{% endif %}
+        </div>
+    </div>
+
+    <!-- Membership Breakdown -->
+    <div class="widget col-span-4">
+        <div class="widget-header">
+            <h3>Membership Status</h3>
+        </div>
+        <div class="widget-body">
+            {% if membership_stats %}<canvas id="membershipChart" height="200"></canvas>
+            {% else %}<div class="text-center text-muted p-4">No members yet</div>{% endif %}
+        </div>
+    </div>
+
+    <!-- Attendance Trend -->
+    <div class="widget col-span-8">
+        <div class="widget-header">
+            <h3>Attendance (Last 30 Days)</h3>
+        </div>
+        <div class="widget-body">
+            {% if attendance_trend %}<canvas id="attendanceChart" height="200"></canvas>
+            {% else %}<div class="text-center text-muted p-4">No attendance data yet</div>{% endif %}
+        </div>
+    </div>
+
+    <!-- Booking Stats -->
+    <div class="widget col-span-6">
+        <div class="widget-header">
+            <h3>Booking Stats (Last 30 Days)</h3>
+        </div>
+        <div class="widget-body">
+            {% if booking_stats %}
+            <canvas id="bookingChart" height="200"></canvas>
+            {% else %}<div class="text-center text-muted p-4">No booking data yet</div>{% endif %}
+        </div>
+    </div>
+
+    <!-- Trainer Workload -->
+    <div class="widget col-span-6">
+        <div class="widget-header">
+            <h3>Trainer Workload</h3>
+        </div>
+        <div class="widget-body">
+            {% if trainer_workload %}
+            <canvas id="trainerChart" height="200"></canvas>
+            {% else %}<div class="text-center text-muted p-4">No trainer data yet</div>{% endif %}
+        </div>
+    </div>
+
+    <!-- Plan Popularity -->
+    <div class="widget col-span-12">
+        <div class="widget-header">
+            <h3>Plan Popularity</h3>
+        </div>
+        <div class="widget-body" style="padding:0;">
+            {% if plan_stats %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Plan</th>
+                        <th>Gym</th>
+                        <th>Price</th>
+                        <th>Subscribers</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in plan_stats %}<tr>
+                        <td class="font-semibold">{{ p['name'] }}</td>
+                        <td>{{ p['gym_name'] }}</td>
+                        <td>₹{{ p['price']|default(0) }}</td>
+                        <td><span class="badge badge-primary">{{ p['subscriber_count'] }}</span></td>
+                    </tr>{% endfor %}
+                </tbody>
+            </table>
+            {% else %}<div class="text-center text-muted p-4">No data yet</div>{% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block dashboard_js %}
+<script>
+    const accent = '#6366f1';
+    const accent2 = '#a78bfa';
+    const chartDefaults = { responsive: true, plugins: { legend: { labels: { color: '#94a3b8' } } }, scales: { x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)' } }, y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)' } } } };
+
+    {% if monthly_revenue %}
+    new Chart(document.getElementById('revenueChart'), {
+        type: 'bar',
+        data: { labels: {{ monthly_revenue| map(attribute = 'month') | list | tojson }},
+        datasets: [{ label: 'Revenue (₹)', data: {{ monthly_revenue| map(attribute = 'total') | list | tojson }}, backgroundColor: accent, borderRadius: 6 }] },
+        options: chartDefaults
+    });
+    {% endif %}
+
+    {% if revenue_by_gym %}
+    new Chart(document.getElementById('gymRevenueChart'), {
+        type: 'doughnut',
+        data: { labels: {{ revenue_by_gym| map(attribute = 'name') | list | tojson }},
+        datasets: [{ data: {{ revenue_by_gym| map(attribute = 'total') | list | tojson }}, backgroundColor: ['#6366f1', '#a78bfa', '#22c55e', '#f59e0b', '#ef4444', '#06b6d4'] }] },
+        options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } } }
+    });
+    {% endif %}
+
+    {% if membership_stats %}
+    new Chart(document.getElementById('membershipChart'), {
+        type: 'doughnut',
+        data: { labels: {{ membership_stats| map(attribute = 'membership_status') | list | tojson }},
+        datasets: [{ data: {{ membership_stats| map(attribute = 'count') | list | tojson }}, backgroundColor: ['#22c55e', '#f59e0b', '#ef4444', '#64748b'] }] },
+        options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } } }
+    });
+    {% endif %}
+
+    {% if attendance_trend %}
+    new Chart(document.getElementById('attendanceChart'), {
+        type: 'line',
+        data: { labels: {{ attendance_trend| map(attribute = 'day') | list | tojson }},
+        datasets: [{ label: 'Check-ins', data: {{ attendance_trend| map(attribute = 'count') | list | tojson }}, borderColor: accent, backgroundColor: 'rgba(99,102,241,0.1)', fill: true, tension: 0.3 }] },
+        options: chartDefaults
+    });
+    {% endif %}
+
+    {% if booking_stats %}
+    new Chart(document.getElementById('bookingChart'), {
+        type: 'bar',
+        data: { labels: {{ booking_stats| map(attribute = 'session_name') | list | tojson }},
+        datasets: [{ label: 'Bookings', data: {{ booking_stats| map(attribute = 'count') | list | tojson }}, backgroundColor: ['#22c55e', '#f59e0b', '#6366f1', '#06b6d4'], borderRadius: 6 }] },
+        options: chartDefaults
+    });
+    {% endif %}
+
+    {% if trainer_workload %}
+    new Chart(document.getElementById('trainerChart'), {
+        type: 'bar',
+        data: { labels: {{ trainer_workload| map(attribute = 'name') | list | tojson }},
+        datasets: [
+        { label: 'Assigned Members', data: {{ trainer_workload| map(attribute = 'members') | list | tojson }}, backgroundColor: accent, borderRadius: 6 },
+        { label: 'Capacity', data: {{ trainer_workload| map(attribute = 'capacity') | list | tojson }}, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 6 }
+    ] },
+        options: chartDefaults
+    });
+    {% endif %}
+</script>
+{% endblock %}

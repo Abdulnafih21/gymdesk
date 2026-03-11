@@ -1,0 +1,166 @@
+{% extends "dashboard_base.html" %}{% block title %}{{ gym['name'] }}{% endblock %}{% block page_title %}{{ gym['name']
+}}{% endblock %}
+{% block sidebar_nav %}{% include "sysadmin/_sidebar.html" %}{% endblock %}
+{% block content %}
+<a href="{{ url_for('sysadmin.gyms') }}" class="btn btn-ghost btn-sm mb-4">← Back to Gyms</a>
+
+<!-- Gym Info -->
+<div class="card-glass mb-6" style="padding:24px;">
+    <div class="flex items-center gap-4 mb-4">
+        <div class="sidebar-avatar" style="width:56px;height:56px;font-size:1.5rem;">{{ gym['name'][0] }}</div>
+        <div>
+            <h2 style="margin-bottom:4px;">{{ gym['name'] }}</h2>
+            <p class="text-sm text-muted">📍 {{ gym['address'] or '' }}, {{ gym['city'] or '' }}{% if gym['state'] %},
+                {{ gym['state'] }}{% endif %} · 🕐 {{ gym['opening_time'] }}–{{ gym['closing_time'] }}</p>
+        </div>
+    </div>
+    <div style="background:rgba(99,102,241,0.06);border-radius:10px;padding:16px;margin-top:12px;">
+        <p class="text-sm"><strong>Admin:</strong> {{ gym['owner_name'] }} · <code>{{ gym['owner_email'] }}</code> · {{
+            gym['owner_phone'] or 'No phone' }}</p>
+        {% if gym['description'] %}<p class="text-sm text-muted mt-1">{{ gym['description'] }}</p>{% endif %}
+    </div>
+</div>
+
+<!-- Revenue Cards -->
+<div class="stats-grid mb-6">
+    <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-value">{{ format_currency(revenue['total']) }}</div>
+        <div class="stat-label">Total Revenue</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-value">{{ format_currency(revenue['monthly']) }}</div>
+        <div class="stat-label">This Month</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-value">{{ format_currency(revenue['today']) }}</div>
+        <div class="stat-label">Today</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-value">{{ members|length }}</div>
+        <div class="stat-label">Members</div>
+    </div>
+</div>
+
+<!-- Plans -->
+<h2 class="mb-4">📋 Membership Plans</h2>
+{% if plans %}
+<div class="table-wrapper mb-6">
+    <table>
+        <thead>
+            <tr>
+                <th>Plan</th>
+                <th>Type</th>
+                <th>Duration</th>
+                <th>Price</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in plans %}<tr>
+                <td class="font-semibold">{{ p['name'] }}</td>
+                <td>{{ p['plan_type']|replace('_',' ')|title }}</td>
+                <td>{{ p['duration_days'] }} days</td>
+                <td class="font-bold">{{ format_currency(p['price']) }}</td>
+                <td><span class="badge badge-{{ 'success' if p['is_active'] else 'neutral' }}">{{ 'Active' if
+                        p['is_active'] else 'Inactive' }}</span></td>
+            </tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}<div class="card mb-6 text-center text-muted p-4">No plans created</div>{% endif %}
+
+<!-- Trainers -->
+<h2 class="mb-4">🏋️ Trainers ({{ trainers|length }})</h2>
+{% if trainers %}
+<div class="table-wrapper mb-6">
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Specialization</th>
+                <th>Capacity</th>
+                <th>Members</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in trainers %}<tr>
+                <td class="font-semibold">{{ t['full_name'] }}</td>
+                <td><code>{{ t['email'] }}</code></td>
+                <td>{{ t['specialization'] or '—' }}</td>
+                <td>{{ t['max_capacity'] }}</td>
+                <td>{{ t['assigned_members'] }}</td>
+                <td><span class="badge badge-{{ 'success' if t['is_approved'] else 'warning' }}">{{ 'Approved' if
+                        t['is_approved'] else 'Pending' }}</span></td>
+            </tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}<div class="card mb-6 text-center text-muted p-4">No trainers</div>{% endif %}
+
+<!-- Members -->
+<h2 class="mb-4">👥 Members ({{ members|length }})</h2>
+{% if members %}
+<div class="table-wrapper mb-6">
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Plan</th>
+                <th>Expires</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for m in members %}<tr>
+                <td class="font-semibold">{{ m['full_name'] }}</td>
+                <td><code>{{ m['email'] }}</code></td>
+                <td>{{ m['phone'] or '—' }}</td>
+                <td>{{ m['plan_name'] or '—' }}</td>
+                <td>{{ format_date(m['sub_end']) if m['sub_end'] else '—' }}</td>
+                <td><span class="badge badge-{{ 'success' if m['membership_status']=='active' else 'warning' }}">{{
+                        m['membership_status']|title }}</span></td>
+            </tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}<div class="card mb-6 text-center text-muted p-4">No members</div>{% endif %}
+
+<!-- Payments -->
+<h2 class="mb-4">💳 Recent Payments</h2>
+{% if payments %}
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Member</th>
+                <th>Plan</th>
+                <th>Amount</th>
+                <th>Method</th>
+                <th>Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in payments %}<tr>
+                <td>{{ p['member_name'] }}</td>
+                <td>{{ p['plan_name'] or p['payment_type']|title }}</td>
+                <td class="font-bold">{{ format_currency(p['amount']) }}</td>
+                <td>{{ p['payment_method']|upper }}</td>
+                <td>{{ format_date(p['payment_date']) }}</td>
+                <td><span
+                        class="badge badge-{{ 'success' if p['status']=='completed' else 'warning' if p['status']=='pending' else 'error' }}">{{
+                        p['status']|title }}</span></td>
+            </tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}<div class="card text-center text-muted p-4">No payments</div>{% endif %}
+{% endblock %}

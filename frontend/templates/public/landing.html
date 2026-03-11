@@ -1,0 +1,399 @@
+{% extends "base.html" %}
+{% block title %}Welcome{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+{% endblock %}
+
+{% block body %}
+<!-- Navigation -->
+<nav class="public-nav">
+    <div class="nav-inner">
+        <a href="{{ url_for('public.landing') }}" class="nav-logo">
+            <div class="nav-logo-icon">G</div>
+            <div class="nav-logo-text">Gym<span>Desk</span></div>
+        </a>
+        <div class="nav-center-links">
+            <a href="{{ url_for('public.gym_list') }}">Browse Gyms</a>
+        </div>
+        <div class="nav-right">
+            {% if current_user.is_authenticated %}
+            {% if current_user.role in ('gym_admin', 'system_admin') %}
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-primary btn-sm">Dashboard</a>
+            {% elif current_user.role == 'member' %}
+            <a href="{{ url_for('member.dashboard') }}" class="btn btn-primary btn-sm">Dashboard</a>
+            {% elif current_user.role == 'trainer' %}
+            <a href="{{ url_for('trainer.dashboard') }}" class="btn btn-primary btn-sm">Dashboard</a>
+            {% endif %}
+            {% else %}
+            <a href="{{ url_for('auth.login') }}" class="btn btn-ghost btn-sm nav-signin-btn">Sign In</a>
+            <a href="#" class="btn btn-primary btn-sm nav-signup-btn"
+                onclick="document.getElementById('megaMenu').classList.add('active')">Sign Up</a>
+            {% endif %}
+            <!-- Hamburger Menu Button -->
+            <button class="mega-menu-toggle" onclick="toggleMegaMenu()" aria-label="Menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Mega Menu Overlay -->
+<div class="mega-menu-overlay" id="megaMenu">
+    <div class="mega-menu-backdrop" onclick="closeMegaMenu()"></div>
+    <div class="mega-menu-panel">
+        <div class="mega-menu-header">
+            <div class="nav-logo">
+                <div class="nav-logo-icon">G</div>
+                <div class="nav-logo-text">Gym<span>Desk</span></div>
+            </div>
+            <button class="mega-menu-close" onclick="closeMegaMenu()">✕</button>
+        </div>
+
+        <div class="mega-menu-body">
+            <!-- Trainer Section -->
+            <div class="mega-menu-section">
+                <div class="mega-section-icon">🏋️</div>
+                <h3 class="mega-section-title">Trainer Portal</h3>
+                <p class="mega-section-desc">Join a gym as a certified fitness trainer</p>
+                <div class="mega-section-actions">
+                    <a href="{{ url_for('auth.register_trainer') }}" class="btn btn-primary w-full">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <line x1="19" y1="8" x2="19" y2="14" />
+                            <line x1="22" y1="11" x2="16" y2="11" />
+                        </svg>
+                        Register as Trainer
+                    </a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-ghost w-full">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4" />
+                            <polyline points="10 17 15 12 10 7" />
+                            <line x1="15" y1="12" x2="3" y2="12" />
+                        </svg>
+                        Trainer Login
+                    </a>
+                </div>
+            </div>
+
+            <div class="mega-menu-divider"></div>
+
+            <!-- Gym Admin Section -->
+            <div class="mega-menu-section">
+                <div class="mega-section-icon">🏢</div>
+                <h3 class="mega-section-title">Gym Admin Portal</h3>
+                <p class="mega-section-desc">Register and manage your gym with GymDesk</p>
+                <div class="mega-section-actions">
+                    <a href="{{ url_for('auth.register_gym_admin') }}" class="btn btn-primary w-full">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                            <polyline points="9 22 9 12 15 12 15 22" />
+                        </svg>
+                        Register Your Gym
+                    </a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-ghost w-full">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4" />
+                            <polyline points="10 17 15 12 10 7" />
+                            <line x1="15" y1="12" x2="3" y2="12" />
+                        </svg>
+                        Gym Admin Login
+                    </a>
+                </div>
+            </div>
+
+            <div class="mega-menu-divider"></div>
+
+            <!-- Member Section -->
+            <div class="mega-menu-section">
+                <div class="mega-section-icon">💪</div>
+                <h3 class="mega-section-title">Member Portal</h3>
+                <p class="mega-section-desc">Join a gym and start your fitness journey</p>
+                <div class="mega-section-actions">
+                    <a href="{{ url_for('auth.register_member') }}" class="btn btn-primary w-full">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <line x1="19" y1="8" x2="19" y2="14" />
+                            <line x1="22" y1="11" x2="16" y2="11" />
+                        </svg>
+                        Register as Member
+                    </a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-ghost w-full">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4" />
+                            <polyline points="10 17 15 12 10 7" />
+                            <line x1="15" y1="12" x2="3" y2="12" />
+                        </svg>
+                        Member Login
+                    </a>
+                </div>
+            </div>
+
+            <div class="mega-menu-divider"></div>
+
+            <!-- System Admin Section -->
+            <div class="mega-menu-section mega-section-admin">
+                <div class="mega-section-icon">🛡️</div>
+                <h3 class="mega-section-title">System Administrator</h3>
+                <p class="mega-section-desc">Platform management and oversight</p>
+                <div class="mega-section-actions">
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-ghost w-full">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                            <path d="M7 11V7a5 5 0 0110 0v4" />
+                        </svg>
+                        System Admin Login
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="mega-menu-footer">
+            <a href="{{ url_for('public.gym_list') }}">🔍 Browse All Gyms</a>
+        </div>
+    </div>
+</div>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-badge">
+            ⚡ Smart Gym Management Platform
+        </div>
+        <h1>Manage Your <span class="text-gradient">Fitness Empire</span> With Ease</h1>
+        <p>Complete gym management system for administrators, trainers, and members. Track memberships, schedule
+            classes, manage payments, and grow your fitness business.</p>
+        <div class="hero-actions">
+            {% if current_user.is_authenticated %}
+            {% if current_user.role in ('gym_admin', 'system_admin') %}
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-primary btn-lg">Go to Dashboard</a>
+            {% elif current_user.role == 'member' %}
+            <a href="{{ url_for('member.dashboard') }}" class="btn btn-primary btn-lg">My Dashboard</a>
+            {% elif current_user.role == 'trainer' %}
+            <a href="{{ url_for('trainer.dashboard') }}" class="btn btn-primary btn-lg">Trainer Dashboard</a>
+            {% endif %}
+            {% else %}
+            <a href="#" class="btn btn-primary btn-lg"
+                onclick="document.getElementById('megaMenu').classList.add('active')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <line x1="19" y1="8" x2="19" y2="14" />
+                    <line x1="22" y1="11" x2="16" y2="11" />
+                </svg>
+                Sign Up
+            </a>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-ghost btn-lg">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4" />
+                    <polyline points="10 17 15 12 10 7" />
+                    <line x1="15" y1="12" x2="3" y2="12" />
+                </svg>
+                Sign In
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Stats Bar -->
+<section class="stats-bar">
+    <div class="stats-bar-inner">
+        <div class="stats-bar-item">
+            <div class="counter" data-target="{{ total_gyms }}">0</div>
+            <div class="counter-label">Gyms Registered</div>
+        </div>
+        <div class="stats-bar-item">
+            <div class="counter" data-target="{{ total_members }}">0</div>
+            <div class="counter-label">Total Members</div>
+        </div>
+        <div class="stats-bar-item">
+            <div class="counter" data-target="{{ total_trainers }}">0</div>
+            <div class="counter-label">Active Trainers</div>
+        </div>
+        <div class="stats-bar-item">
+            <div class="counter" data-target="{{ total_classes }}">0</div>
+            <div class="counter-label">Classes Available</div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="section">
+    <div class="section-header">
+        <h2>Everything You Need to <span class="text-gradient">Run Your Gym</span></h2>
+        <p>From member management to payment tracking, GymDesk provides all the tools you need to manage and grow your
+            fitness business.</p>
+    </div>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">👥</div>
+            <h3>Member Management</h3>
+            <p>Register members with detailed profiles including health info, emergency contacts, and fitness goals.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">💳</div>
+            <h3>Plans & Payments</h3>
+            <p>Create flexible membership plans with custom pricing and durations. Track payments and revenue in
+                real-time.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📅</div>
+            <h3>Class Scheduling</h3>
+            <p>Schedule classes with trainer assignments and capacity limits. Members can browse and book from their
+                dashboard.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h3>QR Code Check-in</h3>
+            <p>Quick and contactless attendance tracking with unique QR codes for each member.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🏋️</div>
+            <h3>Workout Plans</h3>
+            <p>Trainers create personalized workout plans with exercises, sets, and reps. Members view anytime.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Reports & Analytics</h3>
+            <p>Comprehensive dashboards with revenue trends, attendance analytics, and business insights.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h3>Lead Management</h3>
+            <p>Track potential members from first contact to conversion. Manage follow-ups and sources.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">👨‍🏫</div>
+            <h3>Trainer Management</h3>
+            <p>Trainers register and await admin approval. Assign them to classes and manage schedules.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🔔</div>
+            <h3>Notifications</h3>
+            <p>Real-time notifications for trainer approvals, workout assignments, and important updates.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Gyms -->
+{% if featured_gyms %}
+<section class="section" style="padding-top: 0;">
+    <div class="section-header">
+        <h2>Featured <span class="text-gradient">Gyms</span></h2>
+        <p>Explore registered gyms and find the perfect fitness center near you.</p>
+    </div>
+    <div class="gym-grid">
+        {% for gym in featured_gyms %}
+        <div class="gym-card">
+            <div class="gym-card-header">
+                <div class="gym-avatar">{{ gym['name'][0] }}</div>
+                <div>
+                    <h3>{{ gym['name'] }}</h3>
+                    <div class="gym-location">📍 {{ gym['city'] or 'Location TBD' }}{% if gym['state'] %}, {{
+                        gym['state'] }}{% endif %}</div>
+                </div>
+            </div>
+            {% if gym['description'] %}
+            <p class="text-sm text-secondary" style="margin-bottom: 12px;">{{ gym['description'][:100] }}{% if
+                gym['description']|length > 100 %}...{% endif %}</p>
+            {% endif %}
+            <div class="gym-card-stats">
+                <div class="gym-stat">
+                    <div class="gym-stat-value">{{ gym['member_count'] }}</div>
+                    <div class="gym-stat-label">Members</div>
+                </div>
+                <div class="gym-stat">
+                    <div class="gym-stat-value">{{ gym['trainer_count'] }}</div>
+                    <div class="gym-stat-label">Trainers</div>
+                </div>
+            </div>
+            <div class="gym-card-footer">
+                <div class="gym-hours">🕐 {{ gym['opening_time'] }} — {{ gym['closing_time'] }}</div>
+                <span class="badge badge-success">Open</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="text-center mt-6">
+        <a href="{{ url_for('public.gym_list') }}" class="btn btn-secondary">View All Gyms →</a>
+    </div>
+</section>
+{% endif %}
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <h2>Ready to Transform Your Gym Business?</h2>
+    <p>Join GymDesk today and take your fitness center to the next level.</p>
+    <div class="hero-actions" style="position: relative;">
+        <a href="{{ url_for('auth.register_gym_admin') }}" class="btn btn-primary btn-lg">Register Your Gym</a>
+        <a href="{{ url_for('auth.register_member') }}" class="btn btn-secondary btn-lg">Join as Member</a>
+        <a href="{{ url_for('auth.register_trainer') }}" class="btn btn-ghost btn-lg">Apply as Trainer</a>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="public-footer">
+    <p>&copy; 2026 GymDesk. All rights reserved. Built with ❤️ for the fitness community.</p>
+</footer>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Mega Menu
+    function toggleMegaMenu() {
+        document.getElementById('megaMenu').classList.toggle('active');
+    }
+    function closeMegaMenu() {
+        document.getElementById('megaMenu').classList.remove('active');
+    }
+    // Close on Escape
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMegaMenu(); });
+
+    // Animated counters
+    function animateCounters() {
+        const counters = document.querySelectorAll('.counter');
+        counters.forEach(counter => {
+            const target = parseInt(counter.getAttribute('data-target'));
+            const duration = 2000;
+            const startTime = performance.now();
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                counter.textContent = Math.floor(eased * target);
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                } else {
+                    counter.textContent = target;
+                }
+            }
+            requestAnimationFrame(update);
+        });
+    }
+
+    // Intersection Observer for counter animation
+    const statsBar = document.querySelector('.stats-bar');
+    if (statsBar) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounters();
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.3 });
+        observer.observe(statsBar);
+    }
+</script>
+{% endblock %}

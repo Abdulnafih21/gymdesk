@@ -1,0 +1,97 @@
+{% extends "dashboard_base.html" %}{% block title %}Reports{% endblock %}{% block page_title %}Reports & Analytics{%
+endblock %}{% block sidebar_nav %}{% include "admin/_sidebar.html" %}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>📊 Reports & Analytics</h1>
+</div>
+<div class="dashboard-grid">
+    <div class="widget col-span-8">
+        <div class="widget-header">
+            <h3>Monthly Revenue</h3>
+        </div>
+        <div class="widget-body">
+            {% if monthly_revenue %}<canvas id="revenueChart" height="200"></canvas>
+            {% else %}<div class="text-center text-muted p-4">No revenue data yet</div>{% endif %}
+        </div>
+    </div>
+    <div class="widget col-span-4">
+        <div class="widget-header">
+            <h3>Membership Breakdown</h3>
+        </div>
+        <div class="widget-body">
+            {% if membership_stats %}<canvas id="membershipChart" height="200"></canvas>
+            {% else %}<div class="text-center text-muted p-4">No members yet</div>{% endif %}
+        </div>
+    </div>
+    <div class="widget col-span-8">
+        <div class="widget-header">
+            <h3>Attendance (Last 30 Days)</h3>
+        </div>
+        <div class="widget-body">
+            {% if attendance_trend %}<canvas id="attendanceChart" height="200"></canvas>
+            {% else %}<div class="text-center text-muted p-4">No attendance data</div>{% endif %}
+        </div>
+    </div>
+    <div class="widget col-span-4">
+        <div class="widget-header">
+            <h3>Plan Popularity</h3>
+        </div>
+        <div class="widget-body">
+            {% if plan_stats %}<canvas id="planChart" height="200"></canvas>
+            {% else %}<div class="text-center text-muted p-4">No plan data</div>{% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block dashboard_js %}
+<script>
+    const cC = { bg: 'rgba(99,102,241,0.1)', border: '#6366f1', grid: 'rgba(255,255,255,0.05)', text: '#94a3b8' };
+    const pie = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6'];
+    const opts = {
+        responsive: true, plugins: { legend: { labels: { color: '#94a3b8' } } },
+        scales: {
+            x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+            y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+        }
+    };
+
+    {% if monthly_revenue %}
+    new Chart(document.getElementById('revenueChart'), {
+        type: 'bar',
+        data: { labels: {{ monthly_revenue| map(attribute = 'month') | list | tojson }},
+        datasets: [{ label: 'Revenue (₹)', data: {{ monthly_revenue| map(attribute = 'total') | list | tojson }},
+        backgroundColor: cC.bg, borderColor: cC.border, borderWidth: 2, borderRadius: 6 }] },
+        options: opts
+});
+    {% endif %}
+
+    {% if membership_stats %}
+    new Chart(document.getElementById('membershipChart'), {
+        type: 'doughnut',
+        data: { labels: {{ membership_stats| map(attribute = 'membership_status') | list | tojson }},
+        datasets: [{ data: {{ membership_stats| map(attribute = 'count') | list | tojson }}, backgroundColor: pie }] },
+        options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: cC.text } } } }
+});
+    {% endif %}
+
+    {% if attendance_trend %}
+    new Chart(document.getElementById('attendanceChart'), {
+        type: 'line',
+        data: { labels: {{ attendance_trend| map(attribute = 'day') | list | tojson }},
+        datasets: [{ label: 'Check-ins', data: {{ attendance_trend| map(attribute = 'count') | list | tojson }},
+        borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', fill: true, tension: 0.3 }] },
+        options: opts
+});
+    {% endif %}
+
+    {% if plan_stats %}
+    new Chart(document.getElementById('planChart'), {
+        type: 'pie',
+        data: { labels: {{ plan_stats| map(attribute = 'name') | list | tojson }},
+        datasets: [{ data: {{ plan_stats| map(attribute = 'subscriber_count') | list | tojson }}, backgroundColor: pie }] },
+        options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: cC.text } } } }
+});
+    {% endif %}
+</script>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "dashboard_base.html" %}{% block title %}Workouts{% endblock %}{% block page_title %}My Workout Plans{%
+endblock %}
+{% block sidebar_nav %}{% include "member/_sidebar.html" %}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>🏋️ My Workout Plans</h1>
+</div>
+{% if plans %}
+{% for item in plans %}
+<div class="card mb-4">
+    <div class="flex items-center justify-between mb-2">
+        <h3>{{ item.plan['title'] }}</h3><span class="badge badge-info">by {{ item.plan['trainer_name'] }}</span>
+    </div>
+    {% if item.plan['description'] %}<p class="text-sm text-secondary mb-4">{{ item.plan['description'] }}</p>{% endif
+    %}
+    {% if item.exercises %}
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Exercise</th>
+                    <th>Sets</th>
+                    <th>Reps</th>
+                    <th>Day</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in item.exercises %}<tr>
+                    <td class="font-semibold">{{ e['name'] }}</td>
+                    <td>{{ e['sets'] or '—' }}</td>
+                    <td>{{ e['reps'] or '—' }}</td>
+                    <td>{{ e['day_of_week'] or '—' }}</td>
+                    <td class="text-sm text-secondary">{{ e['notes'] or '—' }}</td>
+                </tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}<p class="text-muted text-sm">No exercises added yet.</p>{% endif %}
+</div>
+{% endfor %}
+{% else %}<div class="empty-state">
+    <h3>No workout plans yet</h3>
+    <p>Your trainer will assign workout plans to you.</p>
+</div>{% endif %}
+{% endblock %}

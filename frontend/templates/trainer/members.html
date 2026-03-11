@@ -1,0 +1,35 @@
+{% extends "dashboard_base.html" %}{% block title %}My Members{% endblock %}{% block page_title %}My Members{% endblock
+%}
+{% block sidebar_nav %}{% include "trainer/_sidebar.html" %}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>👥 My Members</h1>
+</div>
+{% if members %}<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Fitness Goal</th>
+                <th>Weight</th>
+                <th>Height</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for m in members %}<tr>
+                <td class="font-semibold">{{ m['full_name'] }}</td>
+                <td>{{ m['email'] }}</td>
+                <td>{{ m['phone'] or '—' }}</td>
+                <td>{{ (m['fitness_goal'] or '—')|replace('_',' ')|title }}</td>
+                <td>{{ m['weight_kg'] or '—' }}{% if m['weight_kg'] %} kg{% endif %}</td>
+                <td>{{ m['height_cm'] or '—' }}{% if m['height_cm'] %} cm{% endif %}</td>
+            </tr>{% endfor %}</tbody>
+    </table>
+</div>
+{% else %}<div class="empty-state">
+    <h3>No members yet</h3>
+    <p>Members who book your classes or have your workout plans will appear here.</p>
+</div>{% endif %}
+{% endblock %}

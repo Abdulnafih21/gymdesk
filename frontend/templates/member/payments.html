@@ -1,0 +1,161 @@
+{% extends "dashboard_base.html" %}{% block title %}Payments & Subscriptions{% endblock %}{% block page_title %}Payments
+& Subscriptions{% endblock %}
+{% block sidebar_nav %}{% include "member/_sidebar.html" %}{% endblock %}
+{% block content %}
+
+<!-- Active Subscription Banner -->
+{% if active_sub %}
+<div class="card-glass mb-6" style="border-left:4px solid var(--accent-success);padding:20px 24px;">
+    <div class="flex items-center justify-between flex-wrap gap-4">
+        <div>
+            <h3 style="color:var(--accent-success);margin-bottom:4px;">✅ Active Membership</h3>
+            <p class="text-sm text-secondary">{{ active_sub['plan_name'] }} · Expires {{
+                format_date(active_sub['end_date']) }}</p>
+        </div>
+        <span class="badge badge-success" style="font-size:0.9rem;padding:6px 14px;">Active</span>
+    </div>
+</div>
+{% else %}
+<div class="card-glass mb-6" style="border-left:4px solid var(--accent-warning);padding:20px 24px;">
+    <div class="flex items-center justify-between flex-wrap gap-4">
+        <div>
+            <h3 style="color:var(--accent-warning);margin-bottom:4px;">⚠️ No Active Membership</h3>
+            <p class="text-sm text-secondary">Please purchase a membership plan to access gym facilities and features.
+            </p>
+        </div>
+        <button class="btn btn-primary" onclick="document.getElementById('paymentModal').classList.add('active')">Record
+            Payment</button>
+    </div>
+</div>
+{% endif %}
+
+<!-- Record Payment Button -->
+<div class="page-header">
+    <h1>💳 Payments</h1>
+    <button class="btn btn-primary" onclick="document.getElementById('paymentModal').classList.add('active')">+ Record
+        Payment</button>
+</div>
+
+<!-- Subscriptions -->
+<h2 class="mb-4">Subscriptions</h2>
+{% if subscriptions %}<div class="table-wrapper mb-6">
+    <table>
+        <thead>
+            <tr>
+                <th>Plan</th>
+                <th>Duration</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in subscriptions %}<tr>
+                <td class="font-semibold">{{ s['plan_name'] }}</td>
+                <td>{{ s['duration_days'] }} days</td>
+                <td>{{ format_date(s['start_date']) }}</td>
+                <td>{{ format_date(s['end_date']) }}</td>
+                <td><span
+                        class="badge badge-{{ 'success' if s['status']=='active' else 'warning' if s['status']=='expired' else 'neutral' }}">{{
+                        s['status']|title }}</span></td>
+            </tr>{% endfor %}</tbody>
+    </table>
+</div>
+{% else %}<div class="card mb-6 text-center text-muted p-6">No subscriptions yet. Submit a payment to get started.</div>
+{% endif %}
+
+<!-- Payment History -->
+<h2 class="mb-4">Payment History</h2>
+{% if payments %}<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Plan</th>
+                <th>Amount</th>
+                <th>Method</th>
+                <th>Transaction ID</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in payments %}<tr>
+                <td class="font-semibold">{{ p['plan_name'] or p['payment_type']|title }}</td>
+                <td class="font-bold">{{ format_currency(p['amount']) }}</td>
+                <td>{{ p['payment_method']|upper }}</td>
+                <td>{{ p['reference_id'] or '—' }}</td>
+                <td>{{ format_date(p['payment_date']) }}</td>
+                <td><span
+                        class="badge badge-{{ 'success' if p['status']=='completed' else 'warning' if p['status']=='pending' else 'error' }}">{{
+                        p['status']|title }}</span></td>
+                <td class="text-sm text-muted">{{ p['admin_notes'] or '' }}</td>
+            </tr>{% endfor %}</tbody>
+    </table>
+</div>
+{% else %}<div class="card text-center text-muted p-6">No payment records</div>{% endif %}
+
+<!-- Record Payment Modal -->
+<div class="modal-overlay" id="paymentModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Record Payment</h3>
+            <button class="modal-close"
+                onclick="document.getElementById('paymentModal').classList.remove('active')">✕</button>
+        </div>
+        <form method="POST" action="{{ url_for('member.submit_payment') }}" enctype="multipart/form-data">
+            <div class="form-group">
+                <label class="form-label">Select Plan *</label>
+                <select name="plan_id" class="form-control" required onchange="updateAmount(this)">
+                    <option value="">— Choose a plan —</option>
+                    {% for plan in plans %}
+                    <option value="{{ plan['id'] }}" data-price="{{ plan['price'] }}">{{ plan['name'] }} — {{
+                        format_currency(plan['price']) }} ({{ plan['duration_days'] }} days)</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Amount (₹) *</label>
+                <input type="number" name="amount" id="payAmount" class="form-control" step="0.01" required
+                    placeholder="e.g. 1500">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Transaction ID *</label>
+                <input type="text" name="transaction_id" class="form-control" required placeholder="e.g. UPI8745932">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Transaction Date</label>
+                <input type="date" name="transaction_date" class="form-control" value="{{ today }}">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Payment Method</label>
+                <select name="payment_method" class="form-control">
+                    <option value="upi">UPI</option>
+                    <option value="bank_transfer">Bank Transfer</option>
+                    <option value="cash">Cash</option>
+                    <option value="card">Card</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Payment Screenshot</label>
+                <input type="file" name="screenshot" class="form-control" accept="image/*">
+                <p class="text-xs text-muted mt-1">Upload a screenshot for faster verification</p>
+            </div>
+            <button class="btn btn-primary w-full btn-lg">Submit Payment for Verification</button>
+            <p class="text-xs text-muted text-center mt-2">Your payment will be reviewed and approved by the gym admin.
+            </p>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block dashboard_js %}
+<script>
+    function updateAmount(sel) {
+        const opt = sel.options[sel.selectedIndex];
+        const price = opt.getAttribute('data-price');
+        if (price) document.getElementById('payAmount').value = price;
+    }
+</script>
+{% endblock %}

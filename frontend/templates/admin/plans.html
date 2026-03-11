@@ -1,0 +1,120 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Plans{% endblock %}{% block page_title %}Membership Plans{% endblock %}
+{% block sidebar_nav %}{% include "admin/_sidebar.html" %}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Membership Plans</h1>
+    {% if gym %}<button class="btn btn-primary"
+        onclick="document.getElementById('addPlanModal').classList.add('active')">+ Add Plan</button>{% endif %}
+</div>
+{% if plans %}
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Plan Name</th>
+                <th>Duration</th>
+                <th>Price</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>{% for p in plans %}<tr>
+                <td class="font-semibold">{{ p['name'] }}</td>
+                <td>{{ p['duration_days'] }} days</td>
+                <td class="font-bold">{{ format_currency(p['price']) }}</td>
+                <td class="truncate" style="max-width:200px;">{{ p['description'] or '—' }}</td>
+                <td><span class="badge badge-{{ 'success' if p['is_active'] else 'neutral' }}">{{ 'Active' if
+                        p['is_active'] else 'Inactive' }}</span></td>
+                <td style="display:flex;gap:6px;flex-wrap:wrap;">
+                    <button class="btn btn-ghost btn-sm"
+                        onclick="openEditPlan({{ p['id'] }}, '{{ p['name']|e }}', {{ p['duration_days'] }}, {{ p['price'] }}, '{{ (p['description'] or '')|e }}', '{{ p['plan_type']|default('monthly') }}')">✏️
+                        Edit</button>
+                    <form method="POST" action="{{ url_for('admin.toggle_plan', plan_id=p['id']) }}"
+                        style="display:inline;"><button class="btn btn-ghost btn-sm">{{ 'Deactivate' if p['is_active']
+                            else 'Activate' }}</button></form>
+                    <form method="POST" action="{{ url_for('admin.delete_plan', plan_id=p['id']) }}"
+                        style="display:inline;" onsubmit="return confirm('Delete this plan? This cannot be undone.')">
+                        <button class="btn btn-ghost btn-sm" style="color:var(--danger);">🗑️ Delete</button>
+                    </form>
+                </td>
+            </tr>{% endfor %}</tbody>
+    </table>
+</div>
+{% else %}<div class="empty-state">
+    <h3>No plans yet</h3>
+    <p>Create membership plans to offer to your members.</p>
+</div>{% endif %}
+
+<!-- Add Plan Modal -->
+<div class="modal-overlay" id="addPlanModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Create Plan</h3><button class="modal-close"
+                onclick="document.getElementById('addPlanModal').classList.remove('active')">✕</button>
+        </div>
+        <form method="POST" action="{{ url_for('admin.add_plan') }}">
+            <div class="form-group"><label class="form-label">Plan Name *</label><input name="name" class="form-control"
+                    placeholder="Monthly Premium" required></div>
+            <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                <div class="form-group"><label class="form-label">Duration (days) *</label><input type="number"
+                        name="duration_days" class="form-control" value="30" required></div>
+                <div class="form-group"><label class="form-label">Price (₹) *</label><input type="number" name="price"
+                        class="form-control" step="0.01" placeholder="1999" required></div>
+            </div>
+            <div class="form-group"><label class="form-label">Description</label><textarea name="description"
+                    class="form-control" rows="2" placeholder="What's included..."></textarea></div>
+            <button class="btn btn-primary w-full">Create Plan</button>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Plan Modal -->
+<div class="modal-overlay" id="editPlanModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Edit Plan</h3><button class="modal-close"
+                onclick="document.getElementById('editPlanModal').classList.remove('active')">✕</button>
+        </div>
+        <form method="POST" id="editPlanForm">
+            <div class="form-group"><label class="form-label">Plan Name *</label><input id="epName" name="name"
+                    class="form-control" required></div>
+            <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                <div class="form-group"><label class="form-label">Duration (days) *</label><input type="number"
+                        id="epDays" name="duration_days" class="form-control" required></div>
+                <div class="form-group"><label class="form-label">Price (₹) *</label><input type="number" id="epPrice"
+                        name="price" class="form-control" step="0.01" required></div>
+            </div>
+            <div class="form-group"><label class="form-label">Plan Type</label>
+                <select name="plan_type" id="epType" class="form-control">
+                    <option value="admission">Admission</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="quarterly">Quarterly</option>
+                    <option value="half_yearly">Half Yearly</option>
+                    <option value="monthly_cardio">Monthly + Cardio</option>
+                    <option value="personal_training">Personal Training</option>
+                    <option value="annual">Annual</option>
+                </select>
+            </div>
+            <div class="form-group"><label class="form-label">Description</label><textarea id="epDesc"
+                    name="description" class="form-control" rows="2"></textarea></div>
+            <button class="btn btn-primary w-full">Update Plan</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block dashboard_js %}
+<script>
+    function openEditPlan(id, name, days, price, desc, planType) {
+        document.getElementById('epName').value = name;
+        document.getElementById('epDays').value = days;
+        document.getElementById('epPrice').value = price;
+        document.getElementById('epDesc').value = desc;
+        document.getElementById('epType').value = planType;
+        document.getElementById('editPlanForm').action = '/admin/plans/' + id + '/edit';
+        document.getElementById('editPlanModal').classList.add('active');
+    }
+</script>
+{% endblock %}

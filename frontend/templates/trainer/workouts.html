@@ -1,0 +1,91 @@
+{% extends "dashboard_base.html" %}{% block title %}Workout Plans{% endblock %}{% block page_title %}Workout Plans{%
+endblock %}
+{% block sidebar_nav %}{% include "trainer/_sidebar.html" %}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>📋 Workout Plans</h1>
+    <button class="btn btn-primary" onclick="document.getElementById('addWorkoutModal').classList.add('active')">+
+        Create Plan</button>
+</div>
+
+{% if plans %}
+{% for p in plans %}
+<div class="card mb-4">
+    <div class="flex items-center justify-between mb-2">
+        <h4>{{ p['title'] }}</h4>
+        <span class="badge badge-info">{{ p['member_name'] or 'Unassigned' }}</span>
+    </div>
+    {% if p['description'] %}<p class="text-sm text-secondary">{{ p['description'] }}</p>{% endif %}
+</div>
+{% endfor %}
+{% else %}<div class="empty-state">
+    <h3>No workout plans</h3>
+    <p>Create workout plans to assign to your members.</p>
+</div>{% endif %}
+
+<!-- Create Workout Modal -->
+<div class="modal-overlay" id="addWorkoutModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Create Workout Plan</h3><button class="modal-close"
+                onclick="document.getElementById('addWorkoutModal').classList.remove('active')">✕</button>
+        </div>
+        <form method="POST" action="{{ url_for('trainer.add_workout') }}">
+            <div class="form-group"><label class="form-label">Title *</label><input name="title" class="form-control"
+                    required></div>
+            <div class="form-group"><label class="form-label">Assign to Member</label><select name="member_id"
+                    class="form-control">
+                    <option value="">— General Plan —</option>{% for m in gym_members %}<option value="{{ m['id'] }}">{{
+                        m['full_name'] }}</option>{% endfor %}
+                </select></div>
+            <div class="form-group"><label class="form-label">Description</label><textarea name="description"
+                    class="form-control" rows="2"></textarea></div>
+            <h4 class="mb-2 mt-4">Exercises</h4>
+            <div id="exerciseList">
+                <div class="card mb-2 p-4" style="background:var(--bg-input);">
+                    <div class="form-row">
+                        <div class="form-group"><label class="form-label">Exercise</label><input name="exercise_name[]"
+                                class="form-control" placeholder="Bench Press"></div>
+                        <div class="form-group"><label class="form-label">Day</label><select name="exercise_day[]"
+                                class="form-control">
+                                <option>Monday</option>
+                                <option>Tuesday</option>
+                                <option>Wednesday</option>
+                                <option>Thursday</option>
+                                <option>Friday</option>
+                                <option>Saturday</option>
+                            </select></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label class="form-label">Sets</label><input type="number"
+                                name="exercise_sets[]" class="form-control" value="3"></div>
+                        <div class="form-group"><label class="form-label">Reps</label><input type="number"
+                                name="exercise_reps[]" class="form-control" value="12"></div>
+                    </div>
+                    <div class="form-group"><label class="form-label">Notes</label><input name="exercise_notes[]"
+                            class="form-control" placeholder="Form tips..."></div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-ghost w-full mb-4" onclick="addExercise()">+ Add Exercise</button>
+            <button class="btn btn-primary w-full">Create Plan</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block dashboard_js %}
+<script>
+    function addExercise() {
+        const list = document.getElementById('exerciseList');
+        const div = document.createElement('div');
+        div.className = 'card mb-2 p-4';
+        div.style.background = 'var(--bg-input)';
+        div.innerHTML = `<div class="form-row"><div class="form-group"><label class="form-label">Exercise</label><input name="exercise_name[]" class="form-control" placeholder="Exercise name"></div>
+    <div class="form-group"><label class="form-label">Day</label><select name="exercise_day[]" class="form-control"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option></select></div></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Sets</label><input type="number" name="exercise_sets[]" class="form-control" value="3"></div>
+    <div class="form-group"><label class="form-label">Reps</label><input type="number" name="exercise_reps[]" class="form-control" value="12"></div></div>
+    <div class="form-group"><label class="form-label">Notes</label><input name="exercise_notes[]" class="form-control"></div>`;
+        list.appendChild(div);
+    }
+</script>
+{% endblock %}

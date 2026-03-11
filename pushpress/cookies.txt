@@ -1,0 +1,7 @@
+# HTTrack Website Copier Cookie File
+# This file format is compatible with Netscape cookies
+.www.pushpress.com	TRUE	/	FALSE	1999999999	_cfuvid	Zhw1wYOgbBSRkYQKnACO4Xhr7SoZ3KlRsu8dlVLnKPg-1773086017109-0.0.1.1-604800000
+.www.pushpress.com	TRUE	/	FALSE	1999999999	_cfuvid	MwU9KSl7cxMR_6auHtFWR9pXn7l3ozgdGSndSgMn_Wo-1773087424525-0.0.1.1-604800000
+www.pushpress.com	TRUE	/	FALSE	1999999999	_cfuvid	ZYUBaRmcqJlV.zaW_Ud61xZcrnHiURBIjFZ36o6Wsns-1773087424.606548-1.0.1.1-LXKkejDU0tPEybNJcewJlZW49ObwMiw38AKC0k9BPjs
+www.pushpress.com	TRUE	/	FALSE	1999999999	SameSite	None
+

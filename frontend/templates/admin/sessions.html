@@ -1,0 +1,134 @@
+{% extends "dashboard_base.html" %}{% block title %}Session Slots{% endblock %}{% block page_title %}Session Slots{%
+endblock %}
+{% block sidebar_nav %}{% include "admin/_sidebar.html" %}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>📅 Session Slots</h1>
+    <button class="btn btn-primary" onclick="document.getElementById('addModal').classList.add('active')">+ Add
+        Session</button>
+</div>
+
+{% if sessions %}
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Session</th>
+                <th>Time</th>
+                <th>Capacity</th>
+                <th>Upcoming Bookings</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in sessions %}<tr>
+                <td class="font-semibold">{{ s['name'] }}</td>
+                <td>{{ s['start_time'] }} – {{ s['end_time'] }}</td>
+                <td>{{ s['capacity'] }}</td>
+                <td><span class="badge badge-primary">{{ s['upcoming_bookings'] }}</span></td>
+                <td><span class="badge badge-{{ 'success' if s['is_active'] else 'neutral' }}">{{ 'Active' if
+                        s['is_active'] else 'Inactive' }}</span></td>
+                <td style="display:flex;gap:6px;flex-wrap:wrap;">
+                    <button class="btn btn-ghost btn-sm"
+                        onclick="openEditSession({{ s['id'] }}, '{{ s['name'] }}', '{{ s['start_time'] }}', '{{ s['end_time'] }}', {{ s['capacity'] }})">✏️
+                        Edit</button>
+                    <form method="POST" action="{{ url_for('admin.toggle_session', session_id=s['id']) }}"
+                        style="display:inline;">
+                        <button class="btn btn-ghost btn-sm">{{ 'Deactivate' if s['is_active'] else 'Activate'
+                            }}</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('admin.delete_session', session_id=s['id']) }}"
+                        style="display:inline;"
+                        onsubmit="return confirm('Delete this session slot? This cannot be undone.')">
+                        <button class="btn btn-ghost btn-sm" style="color:var(--danger);">🗑️ Delete</button>
+                    </form>
+                </td>
+            </tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">
+    <h3>No session slots created</h3>
+    <p>Create session slots (Morning, Afternoon, Evening) so members can book gym time.</p>
+</div>
+{% endif %}
+
+<!-- Add Session Modal -->
+<div class="modal-overlay" id="addModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Add Session Slot</h3>
+            <button class="modal-close"
+                onclick="document.getElementById('addModal').classList.remove('active')">✕</button>
+        </div>
+        <form method="POST" action="{{ url_for('admin.sessions') }}">
+            <div class="form-group">
+                <label class="form-label">Session Name</label>
+                <input type="text" name="name" class="form-control" placeholder="e.g. Morning" required>
+            </div>
+            <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                <div class="form-group">
+                    <label class="form-label">Start Time</label>
+                    <input type="time" name="start_time" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">End Time</label>
+                    <input type="time" name="end_time" class="form-control" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Capacity (max members)</label>
+                <input type="number" name="capacity" class="form-control" value="40" min="1">
+            </div>
+            <button class="btn btn-primary w-full btn-lg">Create Session</button>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Session Modal -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Edit Session Slot</h3>
+            <button class="modal-close"
+                onclick="document.getElementById('editModal').classList.remove('active')">✕</button>
+        </div>
+        <form method="POST" id="editSessionForm">
+            <div class="form-group">
+                <label class="form-label">Session Name</label>
+                <input type="text" name="name" id="editName" class="form-control" required>
+            </div>
+            <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                <div class="form-group">
+                    <label class="form-label">Start Time</label>
+                    <input type="time" name="start_time" id="editStart" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">End Time</label>
+                    <input type="time" name="end_time" id="editEnd" class="form-control" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Capacity</label>
+                <input type="number" name="capacity" id="editCapacity" class="form-control" min="1">
+            </div>
+            <button class="btn btn-primary w-full btn-lg">Update Session</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block dashboard_js %}
+<script>
+    function openEditSession(id, name, startTime, endTime, capacity) {
+        document.getElementById('editName').value = name;
+        document.getElementById('editStart').value = startTime;
+        document.getElementById('editEnd').value = endTime;
+        document.getElementById('editCapacity').value = capacity;
+        document.getElementById('editSessionForm').action = '/admin/sessions/' + id + '/edit';
+        document.getElementById('editModal').classList.add('active');
+    }
+</script>
+{% endblock %}

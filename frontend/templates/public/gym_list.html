@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Browse Gyms{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+{% endblock %}
+
+{% block body %}
+<nav class="public-nav">
+    <div class="nav-inner">
+        <a href="{{ url_for('public.landing') }}" class="nav-logo">
+            <div class="nav-logo-icon">G</div>
+            <div class="nav-logo-text">Gym<span>Desk</span></div>
+        </a>
+        <div class="nav-links">
+            <a href="{{ url_for('public.landing') }}">Home</a>
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-ghost btn-sm">Logout</a>
+            {% else %}
+            <a href="{{ url_for('auth.login') }}">Login</a>
+            <a href="{{ url_for('auth.register_member') }}" class="btn btn-primary btn-sm">Join Now</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<div style="padding-top: 100px;">
+    <section class="section" style="padding-top: 20px;">
+        <div class="section-header" style="margin-bottom: 32px;">
+            <h2>Browse <span class="text-gradient">Gyms</span></h2>
+            <p>Find the perfect gym near you. Search by name or city.</p>
+        </div>
+
+        <form method="get" class="filter-bar" style="max-width: 600px; margin: 0 auto 40px;">
+            <input type="text" name="search" class="form-control" placeholder="Search gyms..." value="{{ search }}"
+                style="max-width: none; flex: 1;">
+            <select name="city" class="form-control" style="max-width: 200px;">
+                <option value="">All Cities</option>
+                {% for c in cities %}
+                <option value="{{ c['city'] }}" {% if selected_city==c['city'] %}selected{% endif %}>{{ c['city'] }}
+                </option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+
+        {% if gyms %}
+        <div class="gym-grid">
+            {% for gym in gyms %}
+            <div class="gym-card">
+                <div class="gym-card-header">
+                    <div class="gym-avatar">{{ gym['name'][0] }}</div>
+                    <div>
+                        <h3>{{ gym['name'] }}</h3>
+                        <div class="gym-location">📍 {{ gym['city'] or 'N/A' }}{% if gym['state'] %}, {{ gym['state']
+                            }}{% endif %}</div>
+                    </div>
+                </div>
+                {% if gym['description'] %}
+                <p class="text-sm text-secondary" style="margin-bottom: 12px;">{{ gym['description'][:120] }}{% if
+                    gym['description']|length > 120 %}...{% endif %}</p>
+                {% endif %}
+                <div class="gym-card-stats">
+                    <div class="gym-stat">
+                        <div class="gym-stat-value">{{ gym['member_count'] }}</div>
+                        <div class="gym-stat-label">Members</div>
+                    </div>
+                    <div class="gym-stat">
+                        <div class="gym-stat-value">{{ gym['trainer_count'] }}</div>
+                        <div class="gym-stat-label">Trainers</div>
+                    </div>
+                </div>
+                <div class="gym-card-footer">
+                    <div class="gym-hours">🕐 {{ gym['opening_time'] }} — {{ gym['closing_time'] }}</div>
+                    {% if gym['gym_type'] %}
+                    <span class="badge badge-info">{{ gym['gym_type'] }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <h3>No gyms found</h3>
+            <p class="text-muted">{% if search or selected_city %}Try a different search.{% else %}Be the first to
+                register your gym!{% endif %}</p>
+            <a href="{{ url_for('auth.register_gym_admin') }}" class="btn btn-primary mt-4">Register Your Gym</a>
+        </div>
+        {% endif %}
+    </section>
+</div>
+
+<footer class="public-footer">
+    <p>&copy; 2026 GymDesk. All rights reserved.</p>
+</footer>
+{% endblock %}
